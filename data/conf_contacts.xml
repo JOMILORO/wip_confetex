@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<odoo>
+
+    <record id="category_cliente" model="res.partner.category">
+        <field name="name">WCliente</field>
+    </record>
+
+    <record id="category_cliente_produccion" model="res.partner.category">
+        <field name="name">Producción</field>
+        <field name="parent_id" ref="category_cliente"/>
+    </record>
+
+
+
+</odoo>

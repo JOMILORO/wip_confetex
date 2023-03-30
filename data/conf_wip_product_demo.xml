@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+
+    <record id="wip_product_category_1" model="product.category">
+        <field name="parent_id" ref="product.product_category_1"/>
+        <field name="name">Pantalones</field>
+    </record>
+
+    <record id="wip_product_product_1" model="product.template">
+        <field name="name">estilo.nombre.pantalon</field>
+        <field name="active" eval="False"/>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="False"/>
+        <field name="categ_id" ref="wip_product_category_1"/>
+        <field name="list_price">1.0</field>
+        <field name="standard_price">1.0</field>
+        <field name="type">product</field>
+        <field name="weight">0.01</field>
+        <field name="uom_id" ref="uom.product_uom_unit"/>
+        <field name="uom_po_id" ref="uom.product_uom_unit"/>
+        <field name="description_sale">Prenda de vestir para dama o caballero</field>
+        <field name="default_code">10000000</field>
+    </record>
+
+</odoo>

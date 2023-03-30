@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Busquedas,filtros y agrupaciones para el modelo especificación (project.wip.especificacion) -->
+        <record id="view_project_wip_especificacion_search" model="ir.ui.view">
+            <field name="name">view.project.wip.especificacion.search</field>
+            <field name="model">project.wip.especificacion</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="name" string="Folio y nombre" filter_domain="['|', '|', ('name', 'ilike', self), ('num_especificacion', 'ilike', self),('tag_ids', 'ilike', self)]"/>
+                    <filter name="mis_especificaciones" string="Mis especificaciones" domain="[('create_uid', '=', uid)]"/>
+                    <filter name="estilos_archivados" string="Archivados" domain="[('active', '=', False)]"/>
+                    <group>
+                        <filter name="group_by_categoria" string="Categoría" context="{'group_by': 'categoria'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+
+        <!-- Acción para el modelo especificacion (project.wip.especificacion)
+             Abre o muestra todos las Tareas asociadas a una especificación, por
+             default muestra la vista Kamban -->
+        <record id="action_view_espec_task_id" model="ir.actions.act_window">
+            <field name="name">Tareas</field>
+            <field name="res_model">project.task</field>
+            <field name="view_mode">kanban,tree,form,calendar,pivot,graph</field>
+            <field name="domain">[('especificacion_id', '=', active_id)]</field>
+            <field name="context">{'search_default_especificacion_id': active_id, 'default_especificacion_id': active_id}</field>
+            <field name="help" type="html">
+                <p>
+                    La gestión de especificaciones de Odoo le permite gestionar la canalización de sus prototipos de manera
+                    eficiente. Puede realizar un seguimiento del progreso, debatir sobre las especificaciones, adjuntar
+                    documentos, etc
+                </p>
+            </field>
+         </record>
+
+        <!-- Acción para el modelo especificacion (project.wip.especificacion)
+             Abre o muestra todos las Tareas asociadas a un estilo, por
+             default muestra la vista lista -->
+        <record id="action_view_espec_task_estilo" model="ir.actions.act_window">
+            <field name="name">Tareas</field>
+            <field name="res_model">project.task</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('numero_estilo', '=', default_numero_estilo), ('especificacion_id', '=', False)]</field>
+            <field name="help" type="html">
+                <p>
+                    La gestión de tareas en Odoo le permite gestionar la canalización de sus prototipos de manera
+                    eficiente. Puede realizar un seguimiento del progreso, debatir sobre las especificaciones, adjuntar
+                    documentos, etc
+                </p>
+            </field>
+         </record>
+
+        <!-- Formulario para el modelo especificacion (project.wip.especificacion) -->
+        <record id="view_project_wip_especificacion_form" model="ir.ui.view">
+            <field name="name">view.project.wip.especificacion.form</field>
+            <field name="model">project.wip.especificacion</field>
+            <field name="arch" type="xml">
+                <form string="Especificación">
+                    <header>
+                        <button name="aprobar_especificacion" type="object" string="Aprobar" class="oe_highlight" states="borrador"/>
+                        <button name="%(action_view_espec_task_estilo)d" type="action" string="Asignar Tarea" context="{'default_numero_estilo': numero_estilo}"/>
+                        <button name="cancelar_especificacion" type="object" string="Cancelar" states="borrador,aprobado"/>
+                        <button name="cambiar_borrador_especificacion" type="object" string="Cambiar a borrador" states="cancelado"/>
+                        <field name="state" widget="statusbar" statusbar_visible="borrador,aprobado" statusbar_colors="{'KEY_IS_STATE':'VALUE_IS_COLOR'}"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button class="oe_stat_button" name="%(action_view_espec_task_id)d" type="action" icon="fa-tasks">
+                                <field name="wip_task_numero" string="Tareas" widget="statinfo"/>
+                            </button>
+                        </div>
+                        <widget name="web_ribbon" title="Archivado" bg-color="bg-danger" attrs="{'invisible': [('active','=',True)]}"/>
+                        <div class="oe_title">
+                            <field name="active" invisible="1"/>
+                            <label class="oe_edit_only" for="name" string="Nombre"/>
+                            <h1><field name="name" placeholder="Nombre para la especificación" required="1" default_focus="1" attrs="{'readonly': [('state','!=','borrador')]}"/></h1>
+                            <label class="oe_edit_only" for="tag_ids" string="Categorías"/>
+                            <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}" invisible="context.get('fsm_mode', False)"/>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="estilo_id" required="1" options="{'no_create': True}" attrs="{'readonly': [('state','!=','borrador')]}"/>
+                                <field name="categoria" attrs="{'readonly': [('state','!=','borrador')]}"/>
+                                <field name="nombre_corto_categoria"/>
+                                <field name="version_id" attrs="{'readonly': [('state','!=','borrador')]}"/>
+                            </group>
+                            <group>
+                                <field name="num_especificacion" readonly="1"/>
+                                <field name="es_archivo" widget="boolean_toggle"/>
+                                <field name="archivo_pdf" filename="nombre_archivo" attrs="{'invisible':[('es_archivo', '=', False)]}"/>
+                                <field name="nombre_archivo" invisible="1"/>
+                                <field name="numero_estilo"/>
+                            </group>
+                            <label for="url" string="URL del documento"/>
+                            <field name="url" widget="url" attrs="{'readonly': [('state','!=','borrador')]}"/>
+                        </group>
+                        <separator string="Detalles"/>
+                        <notebook>
+                            <page string="Descripción">
+                                <field name="descripcion"/>
+                            </page>
+                            <page string="Información de Estilo">
+                                <group>
+                                    <group>
+                                        <field name="nombre_estilo"/>
+                                        <field name="numero_estilo"/>
+                                        <field name="cliente_estilo"/>
+                                    </group>
+                                </group>
+                            </page>
+                            <page string="Infromación de Especificación">
+                                <group>
+                                    <group>
+                                        <field name="create_uid" string="Creado por"/>
+                                        <field name="create_date" string="Creado en"/>
+                                        <field name="write_uid" string="Actualizado por"/>
+                                        <field name="write_date" string="Actualizado en"/>
+                                    </group>
+                                    <group>
+                                        <field name="fch_aprobado" readonly="1" attrs="{'invisible': [('state', '!=', 'aprobado')]}" />
+                                    </group>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids"/>
+                        <field name="activity_ids"/>
+                        <field name="message_ids"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <!-- Listado para el modelo especificación (project.wip.especificacion) -->
+        <record id="view_project_wip_especificacion_tree" model="ir.ui.view">
+            <field name="name">Vista lista de especificación</field>
+            <field name="model">project.wip.especificacion</field>
+            <field name="arch" type="xml">
+                <tree decoration-muted="state == 'cancelado'" decoration-success="state == 'aprobado'">
+                    <field name="num_especificacion"/>
+                    <field name="url" string="G-Drive" widget="url" text="Esp"/>
+                    <field name="name"/>
+                    <field name="cliente_estilo"/>
+                    <field name="state" widget="badge" decoration-success="state == 'aprobado'" decoration-danger="state == 'cancelado'"/>
+                    <field name="tag_ids" widget="many2many_tags"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Vista Kanban para el modelo especificación (project.wip.especificacion) -->
+        <record id="view_project_wip_especificacion_kanban" model="ir.ui.view">
+            <field name="name">Vista kanban de especificación</field>
+            <field name="model">project.wip.especificacion</field>
+            <field name="arch" type="xml">
+                <kanban default_group_by="categoria">
+                    <field name="cliente_estilo"/>
+                    <field name="url"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div class="oe_kanban_global_click">
+                                <div class="oe_kanban_details">
+                                    <div class="o_kanban_record_title">
+                                        <field name="num_especificacion"/>
+                                    </div>
+                                    <div>
+                                        <field name="name"/>
+                                    </div>
+                                    <div t-if="record.cliente_estilo.value">
+                                        <field name="cliente_estilo"/>
+                                    </div>
+                                    <div t-if="record.url.value">
+                                        <field name="url" widget="url" text="Ir a especificación"/>
+                                    </div>
+                                    <div>
+                                        <field name="state" widget="badge" decoration-success="state == 'aprobado'" decoration-danger="state == 'cancelado'"/>
+                                        <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}" invisible="context.get('fsm_mode', False)"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+    </data>
+</odoo>

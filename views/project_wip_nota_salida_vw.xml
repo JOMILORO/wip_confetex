@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Busquedas,filtros y agrupaciones para el modelo nota salida (project.wip.nota.salida) -->
+        <record id="view_project_wip_nota_salida_search" model="ir.ui.view">
+            <field name="name">view.project.wip.nota.salida.search</field>
+            <field name="model">project.wip.nota.salida</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="name" string="Folio" filter_domain="[('name', 'ilike', self)]"/>
+                    <field name="movimientos_ids" string="Número Estilo" filter_domain="['|', '|',
+                        ('movimientos_ids.numero_orden', 'ilike', self),
+                        ('movimientos_ids.numero_estilo', 'ilike', self),
+                        ('movimientos_ids.numero_oc', 'ilike', self)]"/>
+<!--                    <field name="movimientos_ids" string="Tarea" filter_domain="['|',-->
+<!--                        ('movimientos_ids.tarea_id.numero_tarea', 'ilike', self),-->
+<!--                        ('movimientos_ids.tarea_id.name', 'ilike', self)]"/>-->
+                    <field name="proyecto_id" string="Proyecto" filter_domain="[('proyecto_id', 'ilike', self)]"/>
+                    <field name="remitente_user_id" string="Remitente" filter_domain="[('remitente_user_id.name', 'ilike', self)]"/>
+                    <field name="destinatario_user" string="Destinatario" filter_domain="[('destinatario_user', 'ilike', self)]"/>
+                    <filter name="filter_nota_salida" string="Nota salida" domain="[('es_complemento', '=', False)]"/>
+                    <filter name="filter_nota_complemento" string="Nota complemento" domain="[('es_complemento', '=', True)]"/>
+                    <filter name="filter_borrador" string="Edo. Borrador" domain="[('state', '=', 'borrador')]"/>
+                    <filter name="filter_confirmado" string="Edo. Confirmado" domain="[('state', '=', 'confirmado')]"/>
+                    <filter name="filter_finalizado" string="Edo.Finalizado" domain="[('state', '=', 'finalizado')]"/>
+                    <filter name="filter_cancelado" string="Edo. Cancelado" domain="[('state', '=', 'cancelado')]"/>
+                    <group>
+                        <filter name="group_by_proyecto" string="Proyecto" context="{'group_by': 'proyecto_id'}"/>
+                        <filter name="group_by_remitente" string="Remitente" context="{'group_by': 'remitente_user_id'}"/>
+                        <filter name="group_by_empresa_envia" string="Empresa envia" context="{'group_by': 'remitente_empresa_id'}"/>
+                        <filter name="group_by_empresa_recibe" string="Empresa recibe" context="{'group_by': 'destinatario_empresa_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <!-- Listado para el modelo nota salida (project.wip.nota.salida) -->
+        <record id="view_project_wip_nota_salida_tree" model="ir.ui.view">
+            <field name="name">view.project.wip.nota.salida.tree</field>
+            <field name="model">project.wip.nota.salida</field>
+            <field name="arch" type="xml">
+                <tree decoration-muted="state == 'cancelado'" decoration-success="state == 'finalizado'" decoration-primary="state == 'confirmado'">
+                    <field name="name"/>
+                    <field name="fecha_nota"/>
+                    <field name="remitente_user_id"/>
+                    <field name="remitente_empresa_id" optional="show"/>
+                    <field name="autoriza_user_id"/>
+                    <field name="destinatario_user"/>
+                    <field name="destinatario_empresa_id" optional="show"/>
+                    <field name="total_nota" sum="Total"/>
+                    <field name="state" widget="badge" decoration-muted="state == 'cancelado'" decoration-success="state == 'finalizado'" decoration-primary="state == 'confirmado'"  optional="show"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Formulario para el modelo nota de salida (project.wip.nota.salida) -->
+        <record id="view_project_wip_nota_salida_form" model="ir.ui.view">
+            <field name="name">view.project.wip.nota.salida.form</field>
+            <field name="model">project.wip.nota.salida</field>
+            <field name="arch" type="xml">
+                <form string="Nota de salida">
+                    <header>
+                        <button string="Confirmar" type="object" name="confirmar_nota" class="oe_highlight" states="borrador"/>
+                        <button string="Finalizar" type="object" name="finalizar_nota" class="oe_highlight" states="confirmado"/>
+                        <button string="Cancelar" type="object" name="cancelar_nota" states="borrador,confirmado,finalizado"/>
+                        <field name="state" widget="statusbar" statusbar_visible="borrador,confirmado,finalizado" statusbar_colors="{'KEY_IS_STATE':'VALUE_IS_COLOR'}"/>
+                    </header>
+                    <sheet>
+                        <widget name="web_ribbon" title="Archivado" bg-color="bg-danger" attrs="{'invisible': [('active','=',True)]}"/>
+                        <field name="active" invisible="1"/>
+                        <div class="oe_title">
+                            <h1><field name="name"/></h1>
+                        </div>
+                        <group string="Remitente">
+                            <group>
+                                <field name="fecha_nota" attrs="{'readonly': [('state','not in',['borrador', 'confirmado'])]}"/>
+                                <field name="remitente_empresa_id" attrs="{'readonly': [('state','!=','borrador')]}"/>
+                                <field name="remitente_user_id" options="{'no_create': True, 'no_open': True}" attrs="{'readonly': [('state','!=','borrador')]}"/>
+                            </group>
+                            <group>
+                                <field name="proyecto_id" options="{'no_create': True, 'no_open': True}" attrs="{'readonly': [('state','!=','borrador')]}"/>
+                                <field name="autoriza_user_id" options="{'no_create': True, 'no_open': True}" attrs="{'readonly': [('state','!=','borrador')]}"/>
+                                <field name="fecha_nota_fin" readonly="1" attrs="{'invisible':[('fecha_nota_fin', '=', False)]}"/>
+                            </group>
+                        </group>
+                        <group string="Destinatario">
+                            <group>
+                                <field name="destinatario_empresa_id" attrs="{'readonly': [('state','!=','borrador')]}"/>
+                                <field name="es_complemento" invisible="1"/>
+                            </group>
+                            <group>
+                                <field name="destinatario_user" attrs="{'readonly': [('state','!=','borrador')]}"/>
+                            </group>
+                        </group>
+                        <separator string="Detalles"/>
+                        <notebook>
+                            <page string="Movimientos" attrs="{'invisible':[('es_complemento', '=', True)]}">
+                                <field name="movimientos_ids" domain="[('tipo','=','salida'), ('tarea_id.project_id', '=', [proyecto_id]), ('nota_salida', '=', False)]"
+                                       nolabel="1" style="padding: 10px;" attrs="{'readonly': [('state','!=','borrador')]}"/>
+                                <group col="6" class="mt-2 mt-md-0">
+                                    <group colspan="4"></group>
+                                    <group class="oe_subtotal_footer oe_right" colspan="2">
+                                        <field name="total_nota" style="padding-right: 10px;"/>
+                                    </group>
+                                </group>
+                            </page>
+                            <page string="Lineas" attrs="{'invisible':[('es_complemento', '!=', True)]}">
+                                <field name="linea_ids" domain="[('tipo','=','salida'), ('tarea_id.project_id', '=', [proyecto_id])]"
+                                       attrs="{'readonly': [('state','!=','borrador')]}" style="padding: 10px;">
+                                    <tree editable="bottom">
+                                        <control>
+                                            <create name="add_product_control" string="Agregar una línea"/>
+                                        </control>
+                                        <field name="name"/>
+                                        <field name="descripcion"/>
+                                        <field name="cantidad_captura"/>
+                                        <field name="uom"/>
+                                        <field name="fecha_movimiento" optional="show"/>
+                                        <field name="estado_movimiento" invisible="1"/>
+                                        <field name="tipo" optional="show"/>
+                                        <field name="tarea_id" invisible="1"/>
+                                    </tree>
+                                </field>
+                                <group col="6" class="mt-2 mt-md-0">
+                                    <group class="oe_subtotal_footer oe_right" colspan="2">
+                                        <field name="total_nota" style="padding-right: 10px;"/>
+                                    </group>
+                                </group>
+                            </page>
+                            <page string="Observaciones">
+                                <group>
+                                    <field name="observacion" attrs="{'readonly': [('state','!=','borrador')]}"/>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids"/>
+                        <field name="activity_ids"/>
+                        <field name="message_ids"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <!-- Busquedas,filtros y agrupaciones para el modelo lineas nota de salida (project.wip.nota.salida.linea) -->
+        <record id="view_project_wip_nota_salida_linea_search" model="ir.ui.view">
+            <field name="name">view_project_wip_nota_salida_linea_search</field>
+            <field name="model">project.wip.nota.salida.linea</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="name" string="Movimiento" filter_domain="[('name', 'ilike', self)]"/>
+                    <field name="numero_estilo" string="Número Estilo" filter_domain="['|', '|',
+                        ('numero_estilo', 'ilike', self),
+                        ('numero_orden', 'ilike', self),
+                        ('numero_oc', 'ilike', self)]"/>
+                    <field name="tarea_id" string="Tarea" filter_domain="['|',
+                        ('tarea_id.numero_tarea', 'ilike', self),
+                        ('tarea_id.name', 'ilike', self)]"/>
+                    <filter name="filter_entrada" string="Entrada" domain="[('tipo', '=', 'entrada')]"/>
+                    <filter name="filter_salida" string="Salida" domain="[('tipo', '=', 'salida')]"/>
+                    <separator/>
+                    <filter name="filter_state_parcial" string="Edo. parcial" domain="[('estado_movimiento', '=', 'parcial')]"/>
+                    <filter name="filter_state_liquidado" string="Edo. liquidado" domain="[('estado_movimiento', '=', 'liquidado')]"/>
+                    <group>
+                        <filter name="group_by_tipo" string="Entrada/Salida" context="{'group_by': 'tipo'}"/>
+                        <filter name="group_by_tarea" string="Tarea" context="{'group_by': 'tarea_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <!-- Formulario para el modelo lineas nota de salida (project.wip.nota.salida.linea) -->
+        <record id="view_project_wip_nota_salida_linea_form" model="ir.ui.view">
+            <field name="name">view.project.wip.nota.salida.linea.form</field>
+            <field name="model">project.wip.nota.salida.linea</field>
+            <field name="arch" type="xml">
+                <form string="Captura de lineas nota de salida">
+                    <sheet>
+                        <div class="oe_title">
+                            <h1><field name="name" readonly="1"/></h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="tipo"/>
+                                <field name="cantidad_captura"/>
+                                <field name="uom"/>
+                                <field name="fecha_movimiento"/>
+                                <field name="estado_movimiento"/>
+                            </group>
+                            <group>
+                                <field name="numero_estilo"/>
+                                <field name="numero_orden"/>
+                                <field name="numero_oc"/>
+                                <field name="numero_linea"/>
+                                <field name="tarea_id"/>
+                            </group>
+                            <group string="Descripción de la línea">
+                                <field name="descripcion" nolabel="1"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Listado para el modelo lineas nota de salida (project.wip.nota.salida.linea) -->
+        <record id="view_project_wip_nota_salida_linea_tree" model="ir.ui.view">
+            <field name="name">view.project.wip.nota.salida.linea.tree</field>
+            <field name="model">project.wip.nota.salida.linea</field>
+            <field name="arch" type="xml">
+                <tree string="Lineas complementarias" create="false">
+                    <field name="name"/>
+                    <field name="descripcion"/>
+                    <field name="cantidad_captura" sum="Cantidad total"/>
+                    <field name="uom"/>
+                    <field name="fecha_movimiento"/>
+                    <field name="estado_movimiento" optional="show"/>
+                    <field name="tipo" optional="show"/>
+                    <field name="tarea_id" invisible="1"/>
+                </tree>
+            </field>
+        </record>
+
+    </data>
+</odoo>

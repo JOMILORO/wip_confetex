@@ -1,0 +1,358 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Busquedas,filtros y agrupaciones para el modelo estilo (project.wip.estilo) -->
+        <record id="view_project_wip_pedido_search" model="ir.ui.view">
+            <field name="name">view.project.wip.pedido.search</field>
+            <field name="model">project.wip.pedido</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="name" string="Folio" filter_domain="[('name', 'ilike', self)]"/>
+                    <field name="numero_estilo" string="Número Estilo" filter_domain="['|', '|', '|',
+                        ('numero_estilo', 'ilike', self),
+                        ('numero_orden', 'ilike', self),
+                        ('numero_oc', 'ilike', self),
+                        ('numero_tarea', 'ilike', self)]"/>
+                    <filter name="mis_pedidos" string="Mis pedidos" domain="[('create_uid', '=', uid)]"/>
+                    <filter name="filter_porcentaje_corte_alto" string="Porcentaje alto" domain="[('porcentaje_corte', '&gt;', 105.00)]"/>
+                    <filter name="filter_porcentaje_corte_bajo" string="Porcentaje bajo" domain="[('porcentaje_corte', '&lt;', 100.00)]"/>
+                    <separator/>
+                    <filter name="filter_state_borrador" string="Borrador" domain="[('state', '=', 'borrador')]"/>
+                    <filter name="filter_state_pedido" string="Pedido" domain="[('state', '=', 'pedido')]"/>
+                    <filter name="filter_state_solicitado" string="Solicitado" domain="[('state', '=', 'solicitado')]"/>
+                    <filter name="filter_state_trazado" string="Trazado" domain="[('state', '=', 'trazado')]"/>
+                    <filter name="filter_state_liquidado" string="Liquidado" domain="[('state', '=', 'liquidado')]"/>
+                    <filter name="filter_state_cancelado" string="Cancelado" domain="[('state', '=', 'cancelado')]"/>
+                    <group>
+                        <filter name="group_by_cliente" string="Cliente" context="{'group_by': 'partner_id'}"/>
+                        <filter name="group_by_direccion_entrega" string="Dirección de entrega" context="{'group_by': 'partner_shipping_id'}"/>
+                        <filter name="group_by_agente_ventas" string="Agente de Ventas" context="{'group_by': 'user_id'}"/>
+                        <filter name="group_by_estado" string="Estado" context="{'group_by': 'state'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <!-- Inherit Search View to Modify it -->
+        <record id="view_project_wip_product_product_inherit_search" model="ir.ui.view">
+            <field name="name">view.project.wip.product.product.inherit.search</field>
+            <field name="model">product.product</field>
+            <field name="inherit_id" ref="product.product_search_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//filter[@name='filter_to_purchase']" position="after">
+                    <separator/>
+                    <filter name="filter_barcode" string="UPC establecido" domain="[('barcode', '!=', False)]"/>
+                    <separator/>
+                    <filter name="filter_no_barcode" string="UPC no establecido" domain="[('barcode', '=',False)]"/>
+                    <filter name="filter_no_default_code" string="Estilo no establecido" domain="[('default_code', '=',False)]"/>
+                </xpath>
+                <xpath expr="//filter[@name='categ_id']" position="after">
+                    <filter name="group_by_default_code" string="Número estilo" context="{'group_by': 'default_code'}"/>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Acción para abrir Líneas de pedido -->
+        <record id="action_open_detalle_pedido_pivot" model="ir.actions.act_window">
+        <field name="name">Pivote</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">project.wip.detalle.pedido</field>
+        <field name="view_mode">pivot,tree</field>
+        <field name="domain">[('pedido_id', '=', default_name)]</field>
+        <field name="help" type="html">
+          <p class="oe_view_nocontent_create">
+              Aún no hay ningún detalle de pedido, por favor crea uno desde pedidos
+          </p><p>
+            <!-- More details about what a user can do with this object will be OK -->
+            El detalle de pedido debe ser creado dedes un pedido, aquí no podrás crear, esta vista es solo de
+            consulta.
+          </p>
+        </field>
+    </record>
+
+        <!-- Formulario para el modelo pedido (project.wip.pedido) -->
+        <record id="view_project_wip_pedido_form" model="ir.ui.view">
+            <field name="name">view.project.wip.pedido.form</field>
+            <field name="model">project.wip.pedido</field>
+            <field name="arch" type="xml">
+                <form string="Pedido">
+                    <header>
+                        <button string="Aprobar CPO" type="object" name="aprobar_pedido" class="oe_highlight" states="borrador"/>
+                        <button string="Solicitar OC" type="object" name="solicitar_corte" class="oe_highlight" states="pedido"/>
+                        <button string="Liquidar Trazo" type="object" name="liquidar_trazo" class="oe_highlight" states="solicitado"/>
+                        <button string="Liquidar OC" type="object" name="liquidar_corte" class="oe_highlight" states="trazado"/>
+                        <button string="Cancelar" type="object" name="cancelar_corte" states="borrador,pedido,solicitado,trazado,liquidado"/>
+                        <button string="Pivote" type="action" name="%(action_open_detalle_pedido_pivot)d" context="{'default_name': name}"/>
+                        <field name="state" widget="statusbar" statusbar_visible="borrador,pedido,solicitado,trazado,liquidado" statusbar_colors="{'KEY_IS_STATE':'VALUE_IS_COLOR'}"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name" readonly="1"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="tarea_id" domain="[('project_id.es_proyecto_general', '=', True), ('hay_pedido', '=', False)]"
+                                       options="{'no_create': True}"
+                                       attrs="{'readonly': [('state','!=','borrador')]}"/>
+                                <field name="partner_id" options="{'no_open': True}"/>
+                                <field name="partner_shipping_id" options="{'no_create': True, 'no_open': True}"/>
+                                <field name="user_id" options="{'no_create': True, 'no_open': True}"/>
+                            </group>
+                            <group>
+                                <field name="fecha_pedido" attrs="{'readonly': [('state','!=','borrador')]}"/>
+                                <field name="fecha_orden" attrs="{'invisible':[('fecha_orden', '=', False)]}"/>
+                                <field name="fecha_trazo" attrs="{'invisible':[('fecha_trazo', '=', False)]}"/>
+                                <field name="fecha_corte" attrs="{'invisible':[('fecha_corte', '=', False)]}"/>
+                            </group>
+                        </group>
+                        <separator string="Detalles"/>
+                        <notebook>
+                            <page string="Líneas de pedido">
+                                <field name="detalle_ids" attrs="{'readonly': ['|', ('state','=','liquidado'), ('state','=','cancelado')]}">
+                                    <tree editable="bottom">
+                                        <control>
+                                            <create name="add_product_control" string="Agregar variante de producto"/>
+                                        </control>
+                                        <field name="sequence" optional="show" widget="handle"/>
+                                        <field name="name" options="{'no_create': True, 'no_open': True}"/>
+                                        <field name="numero_orden" optional="show"/>
+                                        <field name="color_estilo" optional="show"/>
+                                        <field name="tamayo" optional="show"/>
+                                        <field name="barcode" readonly="1"/>
+                                        <field name="cantidad_pedido" string="Pedido" attrs="{'readonly': [('state','!=','borrador')]}"/>
+                                        <field name="cantidad_solicitud" string="Solictado" attrs="{'readonly': [('state','!=','pedido')]}"/>
+                                        <field name="cantidad_corte" string="Cortado" attrs="{'readonly': [('state','!=','solicitado'), ('state','!=','trazado')]}"/>
+                                        <field name="numero_estilo" optional="show"/>
+                                        <field name="state" optional="show"/>
+                                    </tree>
+                                </field>
+                                <button name="crear_detalle_productos" type="object" string="Traer tallas" class="oe_highlight" attrs="{'invisible':[('state', '!=', 'borrador')]}"/>
+                                <button name="eliminar_detalle_productos" type="object" string="Eliminar detalle" attrs="{'invisible':[('state', '!=', 'borrador')]}" style="margin-left:5px;"/>
+                                <button name="eliminar_productos_cantidad_0" type="object" string="Limpiar detalle" attrs="{'invisible':[('state', '!=', 'borrador')]}" style="margin-left:5px;"/>
+                                <button name="incrementar_cantidad_solicitada" type="object" string="Incrementar" class="oe_highlight" attrs="{'invisible':[('state', '!=', 'pedido')]}" style="margin-left:5px;"/>
+                                <group col="6" class="mt-2 mt-md-0">
+                                    <group colspan="4">
+                                        <field name="terminos" nolabel="1" placeholder="Terminos y condiciones"/>
+                                    </group>
+                                    <group class="oe_subtotal_footer oe_right" colspan="2">
+                                        <field name="total_pedido"/>
+                                        <field name="total_solicitado"/>
+                                        <field name="total_corte"/>
+                                        <div class="oe_subtotal_footer_separator oe_line o_td_label">
+                                            <label for="porcentaje_corte"/>
+                                        </div>
+                                        <field name="porcentaje_corte" nolabel="1" class="oe_subtotal_footer_separator"/>
+                                    </group>
+                                    <div class="oe_clear"/>
+                                </group>
+                            </page>
+                            <page string="Otra información">
+                                <group>
+                                    <group string="Orden producción">
+                                        <field name="numero_tarea"/>
+                                        <field name="numero_orden"/>
+                                        <field name="color_estilo"/>
+                                        <field name="numero_estilo"/>
+                                        <field name="numero_oc"/>
+                                        <field name="numero_linea"/>
+                                    </group>
+                                    <group string="Programación">
+                                        <field name="mes_programacion"/>
+                                        <field name="ayio_programacion"/>
+                                    </group>
+                                </group>
+                            </page>
+                            <page string="Precio">
+                                <group>
+                                    <group>
+                                        <field name="precio" attrs="{'readonly': [('state','!=','borrador')]}"/>
+                                        <field name="currency_id" position="attributes" attrs="{'readonly': [('state','!=','borrador')]}"/>
+                                    </group>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids"/>
+                        <field name="activity_ids"/>
+                        <field name="message_ids"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <!-- Inherit Form View to Modify it product.template -->
+<!--        <record id="view_project_wip_product_template_inherit_form" model="ir.ui.view">-->
+<!--            <field name="name">view.project.wip.product.template.inherit.form</field>-->
+<!--            <field name="model">product.product</field>-->
+<!--            <field name="inherit_id" ref="product.product_template_form_view"/>-->
+<!--            <field name="arch" type="xml">-->
+<!--                 <notebook position="inside">-->
+<!--                     <page string="Talla">-->
+<!--                         <group>-->
+<!--                             <field name="talla"/>-->
+<!--                             <field name="largo"/>-->
+<!--                         </group>-->
+<!--                     </page>-->
+<!--                 </notebook>-->
+<!--            </field>-->
+<!--        </record>-->
+
+        <!-- Inherit Form View to Modify it model product.product -->
+        <record id="view_project_wip_product_product_inherit_form" model="ir.ui.view">
+            <field name="name">view.project.wip.product.product.inherit.form</field>
+            <field name="model">product.product</field>
+            <field name="inherit_id" ref="product.product_normal_form_view"/>
+            <field name="arch" type="xml">
+                <notebook position="inside">
+                     <page string="Talla">
+                         <group>
+                             <field name="talla"/>
+                             <field name="largo"/>
+                         </group>
+                     </page>
+                 </notebook>
+            </field>
+        </record>
+
+        <!-- Inherit Form View to Modify it -->
+        <record id="view_project_wip_product_product_inherit_form2" model="ir.ui.view">
+            <field name="name">view.project.wip.product.product.inherit.form2</field>
+            <field name="model">product.product</field>
+            <field name="inherit_id" ref="product.product_variant_easy_edit_view"/>
+            <field name="arch" type="xml">
+                <field name="barcode" position="after">
+                    <field name="talla"/>
+                    <field name="largo"/>
+                </field>
+            </field>
+        </record>
+
+        <!-- Listado para el modelo pedido (project.wip.pedido) -->
+        <record id="view_project_wip_pedido_tree" model="ir.ui.view">
+            <field name="name">view.project.wip.pedido.tree</field>
+            <field name="model">project.wip.pedido</field>
+            <field name="arch" type="xml">
+                <tree string="Vista lista pedidos" decoration-danger="porcentaje_corte &gt; 105.00" decoration-info="porcentaje_corte &lt; 100.00">
+                    <field name="name"/>
+                    <field name="numero_tarea" string="Tarea" optional="show"/>
+                    <field name="fecha_pedido"/>
+                    <field name="numero_oc" optional="show"/>
+                    <field name="numero_estilo" optional="show"/>
+                    <field name="numero_orden" optional="show"/>
+                    <field name="partner_id"/>
+                    <field name="partner_shipping_id"/>
+                    <field name="user_id" optional="show"/>
+                    <field name="total_pedido" sum="Total pedido"/>
+                    <field name="total_solicitado" sum="Total solicitado"/>
+                    <field name="total_corte" sum="Total corte"/>
+                    <field name="porcentaje_corte" optional="show"/>
+                    <field name="state" widget="badge" decoration-danger="state == 'cancelado'"
+                           decoration-success="state == 'liquidado'" decoration-warning="state == 'trazado'"
+                           decoration-info="state == 'solicitado'" decoration-primary="state == 'pedido'"
+                           decoration-muted="state == 'borrador'"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Busquedas,filtros y agrupaciones para el modelo detalle de pedido (project.wip.detalle.pedido) -->
+        <record id="view_project_wip_detalle_pedido_search" model="ir.ui.view">
+            <field name="name">view.project.wip.detalle.pedido.search</field>
+            <field name="model">project.wip.detalle.pedido</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="pedido_id" string="Pedido" filter_domain="[('pedido_id', 'ilike', self)]"/>
+                    <field name="name" string="Nombre" filter_domain="[('name', 'ilike', self)]"/>
+                    <field name="numero_estilo" string="Número Estilo" filter_domain="['|', '|', '|',
+                        ('numero_estilo', 'ilike', self),
+                        ('numero_orden', 'ilike', self),
+                        ('numero_oc', 'ilike', self),
+                        ('barcode', 'ilike', self)]"/>
+                </search>
+            </field>
+        </record>
+
+         <!-- Listado para el modelo detalle de pedido (project.wip.detalle.pedido) -->
+        <record id="view_project_wip_detalle_pedido_tree" model="ir.ui.view">
+            <field name="name">view.project.wip.detalle.pedido.tree</field>
+            <field name="model">project.wip.detalle.pedido</field>
+            <field name="arch" type="xml">
+                <tree string="Lista detalle del pedido" create="false">
+                    <field name="pedido_id"/>
+                    <field name="name"/>
+                    <field name="numero_orden" optional="show"/>
+                    <field name="numero_oc" optional="show"/>
+                    <field name="color_estilo" optional="show"/>
+                    <field name="tamayo" optional="show"/>
+                    <field name="barcode"/>
+                    <field name="cantidad_pedido" sum="Total pedido"/>
+                    <field name="cantidad_solicitud" sum="Total solicitado"/>
+                    <field name="cantidad_corte" sum="Total corte"/>
+                    <field name="numero_estilo" optional="show"/>
+                    <field name="state" optional="show"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Pivote para el modelo detalle de pedido (project.wip.detalle.pedido) -->
+        <record id="view_project_wip_detalle_pedido_pivot" model="ir.ui.view">
+            <field name="name">view.project.wip.detalle.pedido.pivot</field>
+            <field name="model">project.wip.detalle.pedido</field>
+            <field name="arch" type="xml">
+                <pivot string="Detalle de pedido" sample="1">
+                    <field name="pedido_id" type="row"/>
+                    <field name="largo" type="row"/>
+                    <field name="talla" type="col"/>
+                    <field name="cantidad_pedido" type="measure"/>
+                </pivot>
+            </field>
+        </record>
+
+        <!-- Formulario para el modelo tabla uno (project.wip.tabla.uno) -->
+        <record id="view_project_wip_tabla_uno_form" model="ir.ui.view">
+            <field name="name">view.project.wip.tabla.uno.form</field>
+            <field name="model">project.wip.tabla.uno</field>
+            <field name="arch" type="xml">
+                <form string="Incremento en pedido">
+                    <sheet>
+                        <div class="oe_title">
+                            <h1><field name="name"/></h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="cliente_id" domain="[('category_id','in',[category_cliente_id])]" options="{'no_create': True, 'no_open': True}"/>
+                                <field name="category_cliente_id" invisible="1"/>
+                                <field name="sequence" readonly="1"/>
+                            </group>
+                            <group>
+                                <field name="limite_inferior"/>
+                                <field name="limite_superior"/>
+                                <field name="incremento"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Listado para el modelo tabla uno (project.wip.tabla.uno) -->
+        <record id="view_project_wip_tabla_uno_tree" model="ir.ui.view">
+            <field name="name">view.project.wip.tabla.uno.tree</field>
+            <field name="model">project.wip.tabla.uno</field>
+            <field name="arch" type="xml">
+                <tree string="Tbal de incremento en pedido">
+                    <field name="sequence" optional="show" widget="handle"/>
+                    <field name="name"/>
+                    <field name="cliente_id"/>
+                    <field name="limite_inferior"/>
+                    <field name="limite_superior"/>
+                    <field name="incremento"/>
+                </tree>
+            </field>
+        </record>
+
+    </data>
+</odoo>

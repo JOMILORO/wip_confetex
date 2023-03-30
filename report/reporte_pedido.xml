@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+
+    <record id="action_report_pedido" model="ir.actions.report">
+        <field name="name">Pedido</field>
+        <field name="model">project.wip.pedido</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">wip_confetex.report_pedido</field>
+        <field name="report_file">wip_confetex.report_pedido</field>
+        <field name="print_report_name">('Pedido - %s' %(object.name))</field>
+        <field name="binding_model_id" ref="model_project_wip_pedido"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_pedido">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <div class="oe_structure"/>
+                        <div t-if="o.name" class="col-3 bm-2">
+                            <img t-att-src="'/report/barcode/?type=%s&amp;value=%s&amp;width=%s&amp;height=%s' % ('Code128', o.name, 600, 150)" style="width:100%;height:4rem" alt="Barcode"/>
+                        </div>
+                        <br/>
+                        <div id="datos-cliente" class="row mt32 mb32">
+                            <div t-if="o.partner_id" class="col-5 bm-2">
+                                <strong>Cliente:</strong><br/>
+                                <t t-if="o.partner_id"><span t-field="o.partner_id"/></t><br/>
+                                <t t-if="o.partner_id.street"><span t-field="o.partner_id.street"/></t>
+                                <t t-if="o.partner_id.street2"><span t-field="o.partner_id.street2"/></t><br/>
+                                <t t-if="o.partner_id.city"><span t-field="o.partner_id.city"/></t>
+                                <t t-if="o.partner_id.state_id"><span t-field="o.partner_id.state_id"/></t>
+                                <t t-if="o.partner_id.zip"><span t-field="o.partner_id.zip"/></t><br/>
+                                <t t-if="o.partner_id.country_id"><span t-field="o.partner_id.country_id"/></t><br/>
+                                <t t-if="o.partner_id.vat"><span t-field="o.partner_id.vat"/></t>
+                            </div>
+                            <div t-if="o.partner_shipping_id" class="col-7 bm-2">
+                                <strong>Dirección de entrega:</strong><br/>
+                                <t t-if="o.partner_shipping_id"><span t-field="o.partner_shipping_id"/></t><br/>
+                                <t t-if="o.partner_shipping_id.street"><span t-field="o.partner_shipping_id.street"/></t>
+                                <t t-if="o.partner_shipping_id.street2"><span t-field="o.partner_shipping_id.street2"/></t><br/>
+                                <t t-if="o.partner_shipping_id.city"><span t-field="o.partner_shipping_id.city"/></t>
+                                <t t-if="o.partner_shipping_id.state_id"><span t-field="o.partner_shipping_id.state_id"/></t>
+                                <t t-if="o.partner_shipping_id.zip"><span t-field="o.partner_shipping_id.zip"/></t><br/>
+                                <t t-if="o.partner_shipping_id.country_id"><strong>RFC</strong><span t-field="o.partner_shipping_id.country_id"/></t><br/>
+                            </div>
+                        </div>
+                        <br/>
+                        <h2 t-if="o.state == 'borrador'">Pedido borrador #<span t-field="o.name"/></h2>
+                        <h2 t-if="o.state == 'pedido'">Pedido del cliente #<span t-field="o.name"/></h2>
+                        <h2 t-if="o.state == 'solicitado'">Solictud de corte #<span t-field="o.name"/></h2>
+                        <h2 t-if="o.state == 'trazado'">Pedido trazo finalizado #<span t-field="o.name"/></h2>
+                        <h2 t-if="o.state == 'liquidado'">Pedido del cliente liquidado#<span t-field="o.name"/></h2>
+                        <h2 t-if="o.state == 'cancelado'">Pedido cancelado #<span t-field="o.name"/></h2>
+                        <br/>
+                        <div id="fila-0" class="row mt32 mb32">
+                            <div t-if="o.tarea_id" class="col-5 bm-2">
+                                <strong>Terea general:</strong>
+                                <p t-field="o.tarea_id" class="m-0"/>
+                            </div>
+                             <div t-if="o.mes_programacion" class="col-2 bm-2">
+                                <strong>Mes programación:</strong>
+                                <p t-field="o.mes_programacion" class="m-0"/>
+                            </div>
+                             <div t-if="o.ayio_programacion" class="col-2 bm-2">
+                                <strong>Año Programación:</strong>
+                                <p t-field="o.ayio_programacion" class="m-0"/>
+                            </div>
+                            <div t-if="o.color_estilo" class="col-3 bm-2">
+                                <strong>Lavado:</strong>
+                                <p t-field="o.color_estilo" class="m-0"/>
+                            </div>
+                        </div>
+                        <div id="fila-1" class="row mt32 mb32">
+                            <div t-if="o.numero_estilo" class="col-3 bm-2">
+                                <strong>Estilo:</strong>
+                                <p t-field="o.numero_estilo" class="m-0"/>
+                            </div>
+                             <div t-if="o.numero_orden" class="col-3 bm-2">
+                                <strong>Orden:</strong>
+                                <p t-field="o.numero_orden" class="m-0"/>
+                            </div>
+                             <div t-if="o.numero_oc" class="col-3 bm-2">
+                                <strong>Orden corte:</strong>
+                                <p t-field="o.numero_oc" class="m-0"/>
+                            </div>
+                            <div t-if="o.numero_linea" class="col-3 bm-2">
+                                <strong>Número línea:</strong>
+                                <p t-field="o.numero_linea" class="m-0"/>
+                            </div>
+                        </div>
+                        <div id="fila-2" class="row mt32 mb32">
+                            <div t-if="o.fecha_pedido" class="col-3 bm-2">
+                                <strong>Fecha pedido:</strong>
+                                <p t-field="o.fecha_pedido" class="m-0"/>
+                            </div>
+                             <div t-if="o.fecha_orden" class="col-3 bm-2">
+                                <strong>Fecha orden:</strong>
+                                <p t-field="o.fecha_orden" class="m-0"/>
+                            </div>
+                             <div t-if="o.fecha_trazo" class="col-3 bm-2">
+                                <strong>Fecha trazo:</strong>
+                                <p t-field="o.fecha_trazo" class="m-0"/>
+                            </div>
+                            <div t-if="o.fecha_corte" class="col-3 bm-2">
+                                <strong>Fecha corte:</strong>
+                                <p t-field="o.fecha_corte" class="m-0"/>
+                            </div>
+                        </div>
+                        <br/>
+                        <table class="table table-sm o_main_table">
+                            <thead>
+                                <tr>
+                                    <th name="th_linea" class="text-center"><strong>#</strong></th>
+                                    <th name="th_producto" class="text-center"><strong>Producto</strong></th>
+                                    <th name="th_upc" class="text-center"><strong>UPC/EAN</strong></th>
+                                    <th name="th_peso" class="text-center"><strong>Peso</strong></th>
+                                    <th name="th_cantidad_pedido" class="text-center"><strong>Pedido</strong></th>
+                                    <th name="th_cantidad_solicitado" class="text-center"><strong>Solictado</strong></th>
+                                    <th name="th_cantida_liquidada" class="text-center"><strong>Cortado</strong></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-set="cdt_lineas" t-value="0"/>
+                                <t t-foreach="o.detalle_ids" t-as="linea">
+                                    <tr>
+                                        <t t-set="cdt_lineas" t-value="cdt_lineas+1"/>
+                                        <td><span><t t-esc="cdt_lineas"/></span></td>
+                                        <td id="name_mov"><span t-field="linea.name"/></td>
+                                        <td id="barcode_mov" class="text-center"><span t-field="linea.barcode"/></td>
+                                        <td id="weight_mov" class="text-center"><span t-field="linea.weight"/> kg.</td>
+                                        <td id="cantidad_pedido_mov"><span t-field="linea.cantidad_pedido"/></td>
+                                        <td id="cantidad_solicitud_mov"><span t-field="linea.cantidad_solicitud"/></td>
+                                        <td id="cantidad_corte_mov"><span t-field="linea.cantidad_corte"/></td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                        <br/>
+                        <div id="fila-3" class="row mt32 mb32">
+                            <div class="col-8 bm-2">
+                                <strong>Términos:</strong>
+                                <p t-field="o.terminos" class="m-0"/>
+                            </div>
+                             <div class="col-4 bm-2">
+                                 <div class="row justify-content-end">
+                                     <table class="table table-sm">
+                                         <tbody>
+                                             <tr>
+                                                 <td>Total pedido:</td>
+                                                 <td class="text-right"><span t-field="o.total_pedido"/></td>
+                                             </tr>
+                                             <tr>
+                                                 <td>Total solicitado:</td>
+                                                 <td class="text-right"><span t-field="o.total_solicitado"/></td>
+                                             </tr>
+                                             <tr>
+                                                 <td>Total cortado:</td>
+                                                 <td class="text-right"><span t-field="o.total_corte"/></td>
+                                             </tr>
+                                             <tr>
+                                                 <td>Porcentaje:</td>
+                                                 <td class="text-right"><span t-field="o.porcentaje_corte"/> %</td>
+                                             </tr>
+                                         </tbody>
+                                     </table>
+                                 </div>
+                            </div>
+                        </div>
+                        <div id="fila-4" class="row mt32 mb32">
+                            <span>La presente orden de pedido del cliente cuenta con <t t-esc="cdt_lineas"/> líneas de detalle.</span>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <record id="action_report_pedido_upc" model="ir.actions.report">
+        <field name="name">Pedido UPC</field>
+        <field name="model">project.wip.pedido</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">wip_confetex.report_pedido_upc</field>
+        <field name="report_file">wip_confetex.report_pedido_upc</field>
+        <field name="print_report_name">('Pedido UPC - %s' %(object.name))</field>
+        <field name="binding_model_id" ref="model_project_wip_pedido"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_pedido_upc">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <div class="oe_structure"/>
+                        <div t-if="o.name" class="col-3 bm-2">
+                            <img t-att-src="'/report/barcode/?type=%s&amp;value=%s&amp;width=%s&amp;height=%s' % ('Code128', o.name, 600, 150)" style="width:100%;height:4rem" alt="Barcode"/>
+                        </div>
+                        <br/>
+                        <div id="datos-cliente" class="row mt32 mb32">
+                            <div t-if="o.partner_id" class="col-5 bm-2">
+                                <strong>Cliente:</strong><br/>
+                                <t t-if="o.partner_id"><span t-field="o.partner_id"/></t>
+                            </div>
+                            <div t-if="o.partner_shipping_id" class="col-7 bm-2">
+                                <strong>Dirección de entrega:</strong><br/>
+                                <t t-if="o.partner_shipping_id"><span t-field="o.partner_shipping_id"/></t>
+                            </div>
+                        </div>
+                        <br/>
+                        <h2>UPC para el pedido del cliente #<span t-field="o.name"/></h2>
+                        <br/>
+                        <div id="fila-0" class="row mt32 mb32">
+                            <div t-if="o.numero_estilo" class="col-3 bm-2">
+                                <strong>Estilo:</strong>
+                                <p t-field="o.numero_estilo" class="m-0"/>
+                            </div>
+                             <div t-if="o.numero_orden" class="col-3 bm-2">
+                                <strong>Orden:</strong>
+                                <p t-field="o.numero_orden" class="m-0"/>
+                            </div>
+                             <div t-if="o.numero_oc" class="col-3 bm-2">
+                                <strong>Orden corte:</strong>
+                                <p t-field="o.numero_oc" class="m-0"/>
+                            </div>
+                            <div t-if="o.numero_linea" class="col-3 bm-2">
+                                <strong>Número línea:</strong>
+                                <p t-field="o.numero_linea" class="m-0"/>
+                            </div>
+                        </div>
+                        <table class="table table-sm o_main_table">
+                            <thead>
+                                <tr>
+                                    <th name="th_linea" class="text-center"><strong>#</strong></th>
+                                    <th name="th_codigo_barras" class="text-center"><strong>Código de barras</strong></th>
+                                    <th name="th_producto" class="text-center"><strong>Producto</strong></th>
+                                    <th name="th_cantida_liquidada" class="text-center"><strong>Cortado</strong></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-set="cdt_lineas" t-value="0"/>
+                                <t t-foreach="o.detalle_ids" t-as="linea">
+                                    <tr>
+                                        <t t-set="cdt_lineas" t-value="cdt_lineas+1"/>
+                                        <td><span><t t-esc="cdt_lineas"/></span></td>
+                                        <td id="codigo_barras_mov">
+                                            <div t-if="linea.barcode" style="padding-top:10px; padding-bottom:10px;">
+                                                <img t-att-src="'/report/barcode/?type=%s&amp;value=%s&amp;width=%s&amp;height=%s' % ('Code128', linea.barcode, 600, 150)" style="width:100%;height:4rem" alt="Barcode"/>
+                                            </div>
+                                        </td>
+                                        <td id="name_mov">
+                                            <span t-field="linea.name"/><br/>
+                                            <span t-field="linea.barcode"/>
+                                        </td>
+                                        <td id="cantidad_corte_mov"><span t-field="linea.cantidad_corte"/></td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                        <div id="fila-1" class="row mt32 mb32">
+                            <span>La presente orden de pedido del cliente cuenta con <t t-esc="cdt_lineas"/> líneas de detalle.</span>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+</odoo>

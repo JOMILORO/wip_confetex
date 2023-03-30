@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Inherit Search View to Modify it -->
+        <record id="view_stock_move_wip_inherit_search" model="ir.ui.view">
+            <field name="name">view.stock.move.wip.inherit.search</field>
+            <field name="model">stock.move</field>
+            <field name="inherit_id" ref="stock.view_move_search"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='name']" position="after">
+                     <field name="partida" string="Partida" filter_domain="[('partida', 'ilike', self)]"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="stock_move_tree_partida" model="ir.ui.view">
+            <field name="name">stock_move_tree_partida</field>
+            <field name="model">stock.move</field>
+            <field name="inherit_id" ref="stock.view_move_tree_receipt_picking"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='product_id']" position="after">
+                    <field name="partida"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="stock_move_form_partida" model="ir.ui.view">
+            <field name="name">stock.move.form.partida</field>
+            <field name="model">stock.picking</field>
+            <field name="inherit_id" ref="stock.view_picking_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='move_ids_without_package']/tree/field[@name='product_id']" position="after">
+                    <field name="partida"/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

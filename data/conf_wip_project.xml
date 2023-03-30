@@ -1,0 +1,520 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<odoo>
+
+    <!-- Stages -->
+    <record id="project_stage_0" model="project.task.type">
+        <field name="sequence">1</field>
+        <field name="name">Programación</field>
+        <field name="legend_normal">En progreso</field>
+        <field name="legend_blocked">Bloqueada</field>
+        <field name="legend_done">Finalizada</field>
+    </record>
+    <record id="project_stage_1" model="project.task.type">
+        <field name="sequence">10</field>
+        <field name="name">Pedido</field>
+        <field name="legend_normal">En progreso</field>
+        <field name="legend_blocked">Bloqueado</field>
+        <field name="legend_done">Finalizado</field>
+    </record>
+    <record id="project_stage_2" model="project.task.type">
+        <field name="sequence">12</field>
+        <field name="name">En proceso</field>
+        <field name="legend_normal">Fabricando orden</field>
+        <field name="legend_blocked">Fabricación detenida</field>
+        <field name="legend_done">Fabricación finalizada</field>
+    </record>
+    <record id="project_stage_3" model="project.task.type">
+        <field name="sequence">102</field>
+        <field name="name">Finalizado</field>
+        <field name="legend_normal">En progreso</field>
+        <field name="legend_blocked">Bloqueada</field>
+        <field name="legend_done">Preparado</field>
+    </record>
+    <record id="project_stage_4" model="project.task.type">
+        <field name="sequence">103</field>
+        <field name="name">Entregado</field>
+        <field name="legend_normal">Entregando orden</field>
+        <field name="legend_blocked">Orden no entregada</field>
+        <field name="legend_done">Orden entregada</field>
+        <field name="fold" eval="True"/>
+        <field name="is_closed" eval="True"/>
+    </record>
+    <record id="project_stage_5" model="project.task.type">
+        <field name="sequence">104</field>
+        <field name="name">Cancelado</field>
+        <field name="legend_normal">En progreso</field>
+        <field name="legend_blocked">Bloqueado</field>
+        <field name="legend_done">Lista para ser reabierta</field>
+        <field name="fold" eval="True"/>
+        <field name="is_closed" eval="True"/>
+    </record>
+    <record id="project_stage_7" model="project.task.type">
+        <field name="sequence">101</field>
+        <field name="name">Hecho</field>
+        <field name="legend_normal">En progreso</field>
+        <field name="legend_blocked">Bloqueado</field>
+        <field name="legend_done">Finalizado</field>
+        <field name="fold" eval="True"/>
+        <field name="is_closed" eval="True"/>
+    </record>
+    <record id="project_stage_8" model="project.task.type">
+        <field name="sequence">13</field>
+        <field name="name">Desglose en Corte</field>
+        <field name="legend_normal">En progreso</field>
+        <field name="legend_blocked">Bloqueado</field>
+        <field name="legend_done">Finalizado</field>
+    </record>
+    <record id="project_stage_9" model="project.task.type">
+        <field name="sequence">14</field>
+        <field name="name">En Trazo</field>
+        <field name="legend_normal">En Trazo</field>
+        <field name="legend_blocked">Bloqueada</field>
+        <field name="legend_done">Finalizado</field>
+    </record>
+    <record id="project_stage_10" model="project.task.type">
+        <field name="sequence">15</field>
+        <field name="name">En Proceso Corte</field>
+        <field name="legend_normal">En Corte</field>
+        <field name="legend_blocked">Bloqueado</field>
+        <field name="legend_done">Finalizado</field>
+    </record>
+    <record id="project_stage_11" model="project.task.type">
+        <field name="sequence">16</field>
+        <field name="name">Habilitación</field>
+        <field name="legend_normal">En progreso</field>
+        <field name="legend_blocked">Bloqueado</field>
+        <field name="legend_done">Finalizado</field>
+    </record>
+    <record id="project_stage_12" model="project.task.type">
+        <field name="sequence">17</field>
+        <field name="name">Preparación</field>
+        <field name="legend_normal">En progreso</field>
+        <field name="legend_blocked">Bloqueado</field>
+        <field name="legend_done">Finalizado</field>
+    </record>
+    <record id="project_stage_13" model="project.task.type">
+        <field name="sequence">18</field>
+        <field name="name">Ensamble</field>
+        <field name="legend_normal">En progreso</field>
+        <field name="legend_blocked">Bloqueado</field>
+        <field name="legend_done">Finalizado</field>
+    </record>
+    <record id="project_stage_14" model="project.task.type">
+        <field name="sequence">19</field>
+        <field name="name">Bigote</field>
+        <field name="legend_normal">En progreso</field>
+        <field name="legend_blocked">Bloqueado</field>
+        <field name="legend_done">Finalizado</field>
+    </record>
+    <record id="project_stage_15" model="project.task.type">
+        <field name="sequence">20</field>
+        <field name="name">Laser</field>
+        <field name="legend_normal">En progreso</field>
+        <field name="legend_blocked">Bloqueado</field>
+        <field name="legend_done">Finalizado</field>
+    </record>
+    <record id="project_stage_16" model="project.task.type">
+        <field name="sequence">21</field>
+        <field name="name">Placa</field>
+        <field name="legend_normal">En progreso</field>
+        <field name="legend_blocked">Bloqueado</field>
+        <field name="legend_done">Finalizado</field>
+    </record>
+    <record id="project_stage_17" model="project.task.type">
+        <field name="sequence">22</field>
+        <field name="name">Lijado</field>
+        <field name="legend_normal">En progreso</field>
+        <field name="legend_blocked">Bloqueado</field>
+        <field name="legend_done">Finalizado</field>
+    </record>
+    <record id="project_stage_18" model="project.task.type">
+        <field name="sequence">23</field>
+        <field name="name">Grapa</field>
+        <field name="legend_normal">En progreso</field>
+        <field name="legend_blocked">Bloqueado</field>
+        <field name="legend_done">Finalizado</field>
+    </record>
+    <record id="project_stage_19" model="project.task.type">
+        <field name="sequence">24</field>
+        <field name="name">Prelavado</field>
+        <field name="legend_normal">En progreso</field>
+        <field name="legend_blocked">Bloqueado</field>
+        <field name="legend_done">Finalizado</field>
+    </record>
+    <record id="project_stage_20" model="project.task.type">
+        <field name="sequence">25</field>
+        <field name="name">Potasio</field>
+        <field name="legend_normal">En progreso</field>
+        <field name="legend_blocked">Bloqueado</field>
+        <field name="legend_done">Finalizado</field>
+    </record>
+    <record id="project_stage_21" model="project.task.type">
+        <field name="sequence">26</field>
+        <field name="name">Lavado</field>
+        <field name="legend_normal">En progreso</field>
+        <field name="legend_blocked">Bloqueado</field>
+        <field name="legend_done">Finalizado</field>
+    </record>
+    <record id="project_stage_22" model="project.task.type">
+        <field name="sequence">27</field>
+        <field name="name">Metales y Etiqueta</field>
+        <field name="legend_normal">En progreso</field>
+        <field name="legend_blocked">Bloqueado</field>
+        <field name="legend_done">Finalizado</field>
+    </record>
+    <record id="project_stage_23" model="project.task.type">
+        <field name="sequence">28</field>
+        <field name="name">Plancha y Revisado</field>
+        <field name="legend_normal">En progreso</field>
+        <field name="legend_blocked">Bloqueado</field>
+        <field name="legend_done">Finalizado</field>
+    </record>
+    <record id="project_stage_24" model="project.task.type">
+        <field name="sequence">29</field>
+        <field name="name">Empaque</field>
+        <field name="legend_normal">En progreso</field>
+        <field name="legend_blocked">Bloqueado</field>
+        <field name="legend_done">Finalizado</field>
+    </record>
+    <record id="project_stage_25" model="project.task.type">
+        <field name="sequence">11</field>
+        <field name="name">Solicitud Corte</field>
+        <field name="legend_normal">En progreso</field>
+        <field name="legend_blocked">Bloqueado</field>
+        <field name="legend_done">Finalizado</field>
+    </record>
+    <record id="project_stage_26" model="project.task.type">
+        <field name="sequence">30</field>
+        <field name="name">Corte foráneo</field>
+        <field name="legend_normal">En progreso</field>
+        <field name="legend_blocked">Bloqueado</field>
+        <field name="legend_done">Finalizado</field>
+    </record>
+    <record id="project_stage_27" model="project.task.type">
+        <field name="sequence">31</field>
+        <field name="name">Bordado foráneo</field>
+        <field name="legend_normal">En progreso</field>
+        <field name="legend_blocked">Bloqueado</field>
+        <field name="legend_done">Finalizado</field>
+    </record>
+    <record id="project_stage_28" model="project.task.type">
+        <field name="sequence">32</field>
+        <field name="name">Confección foránea</field>
+        <field name="legend_normal">En progreso</field>
+        <field name="legend_blocked">Bloqueado</field>
+        <field name="legend_done">Finalizado</field>
+    </record>
+    <record id="project_stage_29" model="project.task.type">
+        <field name="sequence">33</field>
+        <field name="name">Lijado foráneo</field>
+        <field name="legend_normal">En progreso</field>
+        <field name="legend_blocked">Bloqueado</field>
+        <field name="legend_done">Finalizado</field>
+    </record>
+    <record id="project_stage_30" model="project.task.type">
+        <field name="sequence">34</field>
+        <field name="name">Lavado foráneo</field>
+        <field name="legend_normal">En progreso</field>
+        <field name="legend_blocked">Bloqueado</field>
+        <field name="legend_done">Finalizado</field>
+    </record>
+    <record id="project_stage_31" model="project.task.type">
+        <field name="sequence">35</field>
+        <field name="name">Terminado foráneo</field>
+        <field name="legend_normal">En progreso</field>
+        <field name="legend_blocked">Bloqueado</field>
+        <field name="legend_done">Finalizado</field>
+    </record>
+
+    <!-- Project -->
+    <record id="project_config_project_01" model="project.project">
+        <field name="name">Wip General</field>
+        <field name="label_tasks">Wip General Confetex</field>
+        <field name="privacy_visibility">employees</field>
+        <field name="color">11</field>
+        <field name="es_proyecto_general" eval="True"/>
+        <field name="sequence">105</field>
+        <field name="user_id" ref="base.user_admin"/>
+        <field name="type_ids" eval="[(4, ref('project_stage_0')), (4, ref('project_stage_1')), (4, ref('project_stage_25')), (4, ref('project_stage_2')), (4, ref('project_stage_7')), (4, ref('project_stage_4')), (4, ref('project_stage_5'))]"/>
+    </record>
+    <record id="project_config_project_02" model="project.project">
+        <field name="name">Corte</field>
+        <field name="label_tasks">Wip Corte Confetex</field>
+        <field name="privacy_visibility">followers</field>
+        <field name="color">1</field>
+        <field name="sequence">10</field>
+        <field name="user_id" ref="base.user_admin"/>
+        <field name="type_ids" eval="[(4, ref('project_stage_0')), (4, ref('project_stage_8')), (4, ref('project_stage_9')), (4, ref('project_stage_10')), (4, ref('project_stage_7')), (4, ref('project_stage_5'))]"/>
+    </record>
+    <record id="project_config_project_12" model="project.project">
+        <field name="name">Bordado</field>
+        <field name="label_tasks">Wip Bordado Confetex</field>
+        <field name="privacy_visibility">followers</field>
+        <field name="color">2</field>
+        <field name="sequence">15</field>
+        <field name="user_id" ref="base.user_admin"/>
+        <field name="type_ids" eval="[(4, ref('project_stage_0')), (4, ref('project_stage_2')), (4, ref('project_stage_7')), (4, ref('project_stage_5'))]"/>
+    </record>
+    <record id="project_config_project_11" model="project.project">
+        <field name="name">Confección</field>
+        <field name="label_tasks">Wip Confección Confetex</field>
+        <field name="privacy_visibility">followers</field>
+        <field name="color">3</field>
+        <field name="sequence">20</field>
+        <field name="user_id" ref="base.user_admin"/>
+        <field name="type_ids" eval="[(4, ref('project_stage_0')), (4, ref('project_stage_11')), (4, ref('project_stage_12')), (4, ref('project_stage_13')), (4, ref('project_stage_7')), (4, ref('project_stage_5'))]"/>
+    </record>
+    <record id="project_config_project_03" model="project.project">
+        <field name="name">Confección P1</field>
+        <field name="label_tasks">Wip Planta 1 Confetex</field>
+        <field name="privacy_visibility">followers</field>
+        <field name="color">2</field>
+        <field name="sequence">25</field>
+        <field name="active" eval="False"/>
+        <field name="user_id" ref="base.user_admin"/>
+        <field name="type_ids" eval="[(4, ref('project_stage_0')), (4, ref('project_stage_11')), (4, ref('project_stage_12')), (4, ref('project_stage_13')), (4, ref('project_stage_7')), (4, ref('project_stage_5'))]"/>
+    </record>
+    <record id="project_config_project_04" model="project.project">
+        <field name="name">Confección P2</field>
+        <field name="label_tasks">Wip Planta 2 Confetex</field>
+        <field name="privacy_visibility">followers</field>
+        <field name="color">3</field>
+        <field name="sequence">30</field>
+        <field name="active" eval="False"/>
+        <field name="user_id" ref="base.user_admin"/>
+        <field name="type_ids" eval="[(4, ref('project_stage_0')), (4, ref('project_stage_11')), (4, ref('project_stage_12')), (4, ref('project_stage_13')), (4, ref('project_stage_7')), (4, ref('project_stage_5'))]"/>
+    </record>
+    <record id="project_config_project_05" model="project.project">
+        <field name="name">Confección P3</field>
+        <field name="label_tasks">Wip Planta 3 Confetex</field>
+        <field name="privacy_visibility">followers</field>
+        <field name="color">4</field>
+        <field name="sequence">35</field>
+        <field name="active" eval="False"/>
+        <field name="user_id" ref="base.user_admin"/>
+        <field name="type_ids" eval="[(4, ref('project_stage_0')), (4, ref('project_stage_11')), (4, ref('project_stage_12')), (4, ref('project_stage_13')), (4, ref('project_stage_7')), (4, ref('project_stage_5'))]"/>
+    </record>
+    <record id="project_config_project_06" model="project.project">
+        <field name="name">Confección P4</field>
+        <field name="label_tasks">Wip Planta 4 Confetex</field>
+        <field name="privacy_visibility">followers</field>
+        <field name="color">5</field>
+        <field name="sequence">40</field>
+        <field name="active" eval="False"/>
+        <field name="user_id" ref="base.user_admin"/>
+        <field name="type_ids" eval="[(4, ref('project_stage_0')), (4, ref('project_stage_11')), (4, ref('project_stage_12')), (4, ref('project_stage_13')), (4, ref('project_stage_7')), (4, ref('project_stage_5'))]"/>
+    </record>
+    <record id="project_config_project_07" model="project.project">
+        <field name="name">Confección P5</field>
+        <field name="label_tasks">Wip Planta 5 Confetex</field>
+        <field name="privacy_visibility">followers</field>
+        <field name="color">6</field>
+        <field name="sequence">45</field>
+        <field name="active" eval="False"/>
+        <field name="user_id" ref="base.user_admin"/>
+        <field name="type_ids" eval="[(4, ref('project_stage_0')), (4, ref('project_stage_11')), (4, ref('project_stage_12')), (4, ref('project_stage_13')), (4, ref('project_stage_7')), (4, ref('project_stage_5'))]"/>
+    </record>
+    <record id="project_config_project_08" model="project.project">
+        <field name="name">Lijado</field>
+        <field name="label_tasks">Wip Lijado Confetex</field>
+        <field name="privacy_visibility">followers</field>
+        <field name="color">4</field>
+        <field name="sequence">50</field>
+        <field name="user_id" ref="base.user_admin"/>
+        <field name="type_ids" eval="[(4, ref('project_stage_0')), (4, ref('project_stage_14')), (4, ref('project_stage_15')), (4, ref('project_stage_16')), (4, ref('project_stage_17')), (4, ref('project_stage_18')), (4, ref('project_stage_7')), (4, ref('project_stage_5'))]"/>
+    </record>
+    <record id="project_config_project_09" model="project.project">
+        <field name="name">Lavandería</field>
+        <field name="label_tasks">Wip Lavandería Confetex</field>
+        <field name="privacy_visibility">followers</field>
+        <field name="color">5</field>
+        <field name="sequence">55</field>
+        <field name="user_id" ref="base.user_admin"/>
+        <field name="type_ids" eval="[(4, ref('project_stage_0')), (4, ref('project_stage_19')), (4, ref('project_stage_20')), (4, ref('project_stage_21')), (4, ref('project_stage_7')), (4, ref('project_stage_5'))]"/>
+    </record>
+    <record id="project_config_project_10" model="project.project">
+        <field name="name">Terminado</field>
+        <field name="label_tasks">Wip Terminado Confetex</field>
+        <field name="privacy_visibility">followers</field>
+        <field name="color">6</field>
+        <field name="sequence">60</field>
+        <field name="user_id" ref="base.user_admin"/>
+        <field name="type_ids" eval="[(4, ref('project_stage_0')), (4, ref('project_stage_22')), (4, ref('project_stage_23')), (4, ref('project_stage_24')), (4, ref('project_stage_7')), (4, ref('project_stage_5'))]"/>
+    </record>
+    <record id="project_config_project_13" model="project.project">
+        <field name="name">Sub-Maquila</field>
+        <field name="label_tasks">Wip Sub-Maquila Foránea</field>
+        <field name="privacy_visibility">followers</field>
+        <field name="color">7</field>
+        <field name="sequence">65</field>
+        <field name="user_id" ref="base.user_admin"/>
+        <field name="type_ids" eval="[(4, ref('project_stage_0')), (4, ref('project_stage_26')), (4, ref('project_stage_27')), (4, ref('project_stage_28')), (4, ref('project_stage_29')), (4, ref('project_stage_30')), (4, ref('project_stage_31')), (4, ref('project_stage_7')), (4, ref('project_stage_5'))]"/>
+    </record>
+
+    <!-- Otros -->
+    <record id="config_genero_caballero_01" model="project.wip.estilo.genero">
+        <field name="name">Pantalón mezclilla caballero</field>
+    </record>
+
+    <record id="config_genero_dama_01" model="project.wip.estilo.genero">
+        <field name="name">Pantalón mezclilla dama</field>
+    </record>
+
+    <record id="config_genero_nino_01" model="project.wip.estilo.genero">
+        <field name="name">Pantalón mezclilla niño</field>
+    </record>
+
+    <record id="config_genero_nina_01" model="project.wip.estilo.genero">
+        <field name="name">Pantalón mezclilla niña</field>
+    </record>
+
+    <record id="config_canal_categoria_01" model="project.wip.canal.categoria">
+        <field name="name">Especificación</field>
+    </record>
+
+    <record id="config_especificacion_tag_01" model="project.wip.especificacion.tags">
+        <field name="name">Especificaciones</field>
+        <field name="nombre_corto">ESP</field>
+        <field name="color">3</field>
+        <field name="descripcion">Esta es una categoría para poder agrupar especificaciones, esta puede ser por cliente o algún otro criterio que usted desee.</field>
+        <field name="categoria_id" ref="config_canal_categoria_01"/>
+    </record>
+
+    <record id="config_especificacion_version_01" model="project.wip.especificacion.version">
+        <field name="name">SP21</field>
+    </record>
+
+    <!-- Líneas de Proceso -->
+    <record id="confg_linea_proceso_00" model="project.wip.linea.proceso">
+        <field name="name">Wip General</field>
+        <field name="responsable_id" ref="base.user_admin"/>
+        <field name="valor_por_defecto" eval="False"/>
+        <field name="etapa_inicial_id" eval="project_stage_0"/>
+        <field name="sequence">9</field>
+        <field name="active" eval="False"/>
+        <field name="es_primer_proceso" eval="False"/>
+        <field name="proyecto_id" ref="project_config_project_01"/>
+    </record>
+    <record id="confg_linea_proceso_01" model="project.wip.linea.proceso">
+        <field name="name">Corte Línea 1</field>
+        <field name="responsable_id" ref="base.user_admin"/>
+        <field name="valor_por_defecto" eval="True"/>
+        <field name="etapa_inicial_id" eval="project_stage_0"/>
+        <field name="sequence">10</field>
+        <field name="es_primer_proceso" eval="True"/>
+        <field name="proyecto_id" ref="project_config_project_02"/>
+    </record>
+    <record id="confg_linea_proceso_10" model="project.wip.linea.proceso">
+        <field name="name">Bordado Línea 1</field>
+        <field name="responsable_id" ref="base.user_admin"/>
+        <field name="valor_por_defecto" eval="True"/>
+        <field name="etapa_inicial_id" eval="project_stage_0"/>
+        <field name="sequence">11</field>
+        <field name="proyecto_id" ref="project_config_project_12"/>
+    </record>
+    <record id="confg_linea_proceso_02" model="project.wip.linea.proceso">
+        <field name="name">Confección Planta 1 </field>
+        <field name="responsable_id" ref="base.user_admin"/>
+        <field name="valor_por_defecto" eval="True"/>
+        <field name="etapa_inicial_id" eval="project_stage_0"/>
+        <field name="sequence">12</field>
+        <field name="proyecto_id" ref="project_config_project_11"/>
+    </record>
+    <record id="confg_linea_proceso_03" model="project.wip.linea.proceso">
+        <field name="name">Confección Planta 2</field>
+        <field name="responsable_id" ref="base.user_admin"/>
+        <field name="etapa_inicial_id" eval="project_stage_0"/>
+        <field name="sequence">13</field>
+        <field name="proyecto_id" ref="project_config_project_11"/>
+    </record>
+    <record id="confg_linea_proceso_04" model="project.wip.linea.proceso">
+        <field name="name">Confección Planta 3</field>
+        <field name="responsable_id" ref="base.user_admin"/>
+        <field name="etapa_inicial_id" eval="project_stage_0"/>
+        <field name="sequence">14</field>
+        <field name="proyecto_id" ref="project_config_project_11"/>
+    </record>
+    <record id="confg_linea_proceso_05" model="project.wip.linea.proceso">
+        <field name="name">Confección Planta 4</field>
+        <field name="responsable_id" ref="base.user_admin"/>
+        <field name="etapa_inicial_id" eval="project_stage_0"/>
+        <field name="sequence">15</field>
+        <field name="proyecto_id" ref="project_config_project_11"/>
+    </record>
+    <record id="confg_linea_proceso_06" model="project.wip.linea.proceso">
+        <field name="name">Confección Planta 5</field>
+        <field name="responsable_id" ref="base.user_admin"/>
+        <field name="etapa_inicial_id" eval="project_stage_0"/>
+        <field name="sequence">16</field>
+        <field name="proyecto_id" ref="project_config_project_11"/>
+    </record>
+    <record id="confg_linea_proceso_07" model="project.wip.linea.proceso">
+        <field name="name">Lijado Línea 1</field>
+        <field name="responsable_id" ref="base.user_admin"/>
+        <field name="valor_por_defecto" eval="True"/>
+        <field name="etapa_inicial_id" eval="project_stage_0"/>
+        <field name="sequence">17</field>
+        <field name="proyecto_id" ref="project_config_project_08"/>
+    </record>
+    <record id="confg_linea_proceso_08" model="project.wip.linea.proceso">
+        <field name="name">Lavandería Línea 1</field>
+        <field name="responsable_id" ref="base.user_admin"/>
+        <field name="valor_por_defecto" eval="True"/>
+        <field name="etapa_inicial_id" eval="project_stage_0"/>
+        <field name="sequence">18</field>
+        <field name="proyecto_id" ref="project_config_project_09"/>
+    </record>
+    <record id="confg_linea_proceso_09" model="project.wip.linea.proceso">
+        <field name="name">Terminado Línea 1</field>
+        <field name="responsable_id" ref="base.user_admin"/>
+        <field name="valor_por_defecto" eval="True"/>
+        <field name="etapa_inicial_id" eval="project_stage_0"/>
+        <field name="sequence">19</field>
+        <field name="proyecto_id" ref="project_config_project_10"/>
+    </record>
+    <record id="confg_linea_proceso_11" model="project.wip.linea.proceso">
+        <field name="name">Sub-Maquila foránea</field>
+        <field name="responsable_id" ref="base.user_admin"/>
+        <field name="etapa_inicial_id" eval="project_stage_0"/>
+        <field name="sequence">20</field>
+        <field name="proyecto_id" ref="project_config_project_13"/>
+    </record>
+    <record id="trazo_desglose_clasificacion_01" model="project.wip.desglose.clasificacion">
+        <field name="name">Desglose forro</field>
+    </record>
+    <record id="trazo_desglose_clasificacion_02" model="project.wip.desglose.clasificacion">
+        <field name="name">Desglose fusión</field>
+    </record>
+    <record id="trazo_desglose_clasificacion_03" model="project.wip.desglose.clasificacion">
+        <field name="name">Desglose trazo</field>
+    </record>
+    <record id="movimiento_nota_salida_empresa_01" model="project.wip.nota.salida.empresa">
+        <field name="name">Confetex Ahuateno</field>
+    </record>
+    <record id="movimiento_nota_salida_empresa_02" model="project.wip.nota.salida.empresa">
+        <field name="name">Confetex La Misma Idea</field>
+    </record>
+    <record id="movimiento_nota_salida_empresa_03" model="project.wip.nota.salida.empresa">
+        <field name="name">Coditex Ahuateno</field>
+    </record>
+    <record id="movimiento_nota_salida_empresa_04" model="project.wip.nota.salida.empresa">
+        <field name="name">Coditex La Misma Idea</field>
+    </record>
+
+    <record id="producto_tela" model="product.category">
+        <field name="name">Tela</field>
+    </record>
+    <record id="categoria_producto_1" model="product.category">
+        <field name="parent_id" ref="producto_tela"/>
+        <field name="name">Desglose forro</field>
+    </record>
+    <record id="categoria_producto_2" model="product.category">
+        <field name="parent_id" ref="producto_tela"/>
+        <field name="name">Desglose fusión</field>
+    </record>
+    <record id="categoria_producto_3" model="product.category">
+        <field name="parent_id" ref="producto_tela"/>
+        <field name="name">Desglose trazo</field>
+    </record>
+</odoo>

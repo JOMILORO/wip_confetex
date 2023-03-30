@@ -1,0 +1,412 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+
+    <record id="action_report_tarea" model="ir.actions.report">
+        <field name="name">Tarea</field>
+        <field name="model">project.task</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">wip_confetex.report_tarea</field>
+        <field name="report_file">wip_confetex.report_tarea</field>
+        <field name="print_report_name">('Tarea - %s' %(object.numero_tarea))</field>
+        <field name="binding_model_id" ref="model_project_task"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_tarea">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <div class="oe_structure"/>
+                        <div t-if="o.numero_tarea" class="col-6 bm-2">
+                            <img t-att-src="'/report/barcode/?type=%s&amp;value=%s&amp;width=%s&amp;height=%s' % ('Code128', o.numero_tarea, 600, 150)" style="width:100%;height:4rem" alt="Barcode"/>
+                        </div>
+                        <br/>
+                        <h3><span t-field="o.stage_id"/> terea #<span t-field="o.numero_tarea"/></h3>
+                        <t t-if="o.name">
+                            <h2><span t-field="o.name"/></h2>
+                        </t>
+                        <br/>
+                        <div id="fila-0" class="row mt32 mb32">
+                            <div class="col-5 bm-2">
+                                <div class="row justify-content-end">
+                                    <table class="table table-sm table-borderless">
+                                        <tbody>
+                                            <tr>
+                                                <td><strong>Proyecto</strong></td>
+                                                <td><span t-field="o.project_id"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Asignada a</strong></td>
+                                                <td><span t-field="o.user_id"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Cancelación</strong></td>
+                                                <td><span t-field="o.fecha_entrega"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Fecha límite</strong></td>
+                                                <td><span t-field="o.date_deadline"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Categorías</strong></td>
+                                                <td><span t-field="o.tag_ids"/></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="col-7 bm-2">
+                                <div class="row justify-content-end">
+                                    <table class="table table-sm table-borderless">
+                                        <tbody>
+                                            <tr>
+                                                <td><strong>Cliente</strong></td>
+                                                <td><span t-field="o.partner_id"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Dirección de entrega</strong></td>
+                                                <td><span t-field="o.partner_shipping_id"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Elemento del CPO</strong></td>
+                                                <td><span t-field="o.cpo_id"/></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="fila-1" class="row mt32 mb32">
+                            <div t-if="o.parent_id.numero_tarea" class="col-6 bm-2">
+                                <img t-att-src="'/report/barcode/?type=%s&amp;value=%s&amp;width=%s&amp;height=%s' % ('Code128', o.parent_id.numero_tarea, 600, 150)" style="width:100%;height:4rem" alt="Barcode"/>
+                            </div>
+                            <div t-if="o.parent_id" class="col-9 bm-2">
+                                <strong>Tarea padre</strong>
+                                <p t-field="o.parent_id" class="m-0"/>
+                            </div>
+                        </div>
+                        <br/>
+                        <h3>Descripción</h3>
+                        <div id="fila-2" class="row mt32 mb32">
+                            <div t-if="o.description" class="bm-2">
+                                <p t-field="o.description" class="m-0"/>
+                            </div>
+                        </div>
+                        <br/>
+                        <h3>Orden producción</h3>
+                        <div id="fila-3" class="row mt32 mb32">
+                            <div class="col-6 bm-2">
+                                <div class="row justify-content-end">
+                                    <table class="table table-sm table-borderless">
+                                        <thead>
+                                            <tr>
+                                                <th name="th_titulo1"><h4>Información</h4></th>
+                                                <th name="th_titulo2"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td><strong>Nombre</strong></td>
+                                                <td><span t-field="o.estilo_id"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Estilo</strong></td>
+                                                <td><span t-field="o.numero_estilo"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Orden</strong></td>
+                                                <td><span t-field="o.numero_orden"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Color</strong></td>
+                                                <td><span t-field="o.color_estilo"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Linea</strong></td>
+                                                <td><span t-field="o.numero_linea"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Orden corte</strong></td>
+                                                <td><span t-field="o.numero_oc"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Descripción OC</strong></td>
+                                                <td><span t-field="o.descripcion_corta"/></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="col-6 bm-2">
+                                <div class="row justify-content-end">
+                                    <table class="table table-sm table-borderless">
+                                        <thead>
+                                            <tr>
+                                                <th name="th_titulo1"><h4>Programación</h4></th>
+                                                <th name="th_titulo2"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td><strong>Inicio</strong></td>
+                                                <td><span t-field="o.fecha_orden"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Finalización</strong></td>
+                                                <td><span t-field="o.fecha_cancelacion"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Mes</strong></td>
+                                                <td><span t-field="o.mes_programacion"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Año</strong></td>
+                                                <td><span t-field="o.ayio_programacion"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Dias proceso</strong></td>
+                                                <td><span t-field="o.dias_proceso"/></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="fila-4" class="row mt32 mb32">
+                            <div class="col-6 bm-2">
+                                <div class="row justify-content-end">
+                                    <table class="table table-sm table-borderless">
+                                        <thead>
+                                            <tr>
+                                                <th name="th_titulo1"><h4>Especificación</h4></th>
+                                                <th name="th_titulo2"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td><strong>Especificación</strong></td>
+                                                <td><span t-field="o.especificacion_id"/></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="col-6 bm-2">
+                                <div class="row justify-content-end">
+                                    <table class="table table-sm table-borderless">
+                                        <thead>
+                                            <tr>
+                                                <th name="th_titulo1"><h4>Tela</h4></th>
+                                                <th name="th_titulo2"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td><strong>Tela</strong></td>
+                                                <td><span t-field="o.producto_tela_id"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Pocketing</strong></td>
+                                                <td><span t-field="o.producto_pocketing_id"/></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="fila-5" class="row mt32 mb32">
+                            <div class="col-6 bm-2">
+                                <div class="row justify-content-end">
+                                    <table class="table table-sm table-borderless">
+                                        <thead>
+                                            <tr>
+                                                <th name="th_titulo1"><h4>Fechas</h4></th>
+                                                <th name="th_titulo2"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td><strong>Orden</strong></td>
+                                                <td><span t-field="o.fecha_orden2"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Trazo</strong></td>
+                                                <td><span t-field="o.fecha_trazo"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Corte</strong></td>
+                                                <td><span t-field="o.fecha_corte"/></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <br/>
+                        <div t-if="o.detalle_linea_proceso_ids">
+                            <h3>Procesos</h3>
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th name="th_name" class="text-center"><strong>Línea proceso</strong></th>
+                                        <th name="th_responsable_id" class="text-center"><strong>Responsable</strong></th>
+                                        <th name="th_proyecto_id" class="text-center"><strong>Proyecto</strong></th>
+                                        <th name="th_etapa_inicial_id" class="text-center"><strong>Etapa inicial</strong></th>
+                                        <th name="th_fecha_orden" class="text-center"><strong>Inicio</strong></th>
+                                        <th name="th_fecha_cancelacion" class="text-center"><strong>Cancelación</strong></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="o.detalle_linea_proceso_ids" t-as="linea">
+                                        <tr>
+                                            <td id="name_mov"><span t-field="linea.name"/></td>
+                                            <td id="responsable_id_mov"><span t-field="linea.responsable_id"/></td>
+                                            <td id="proyecto_id_mov"><span t-field="linea.proyecto_id"/></td>
+                                            <td id="etapa_inicial_id_mov"><span t-field="linea.etapa_inicial_id"/></td>
+                                            <td id="fecha_orden_mov"><span t-field="linea.fecha_orden"/></td>
+                                            <td id="fecha_cancelacion_mov"><span t-field="linea.fecha_cancelacion"/></td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </div>
+                        <br/>
+                        <div t-if="o.movimiento_ids">
+                            <h3>Movimientos</h3>
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th name="th_movimiento" class="text-center"><strong>Movimiento</strong></th>
+                                        <th name="th_tipo" class="text-center"><strong>Tipo</strong></th>
+                                        <th name="th_origen_destino" class="text-center"><strong>Origen/Destino</strong></th>
+                                        <th name="th_cantidad" class="text-center"><strong>Cantidad</strong></th>
+                                        <th name="th_fecha" class="text-center"><strong>Fecha</strong></th>
+                                        <th name="th_nota_salida" class="text-center"><strong>Nota salida</strong></th>
+                                        <th name="th_enviado" class="text-center"><strong>Enviado</strong></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="o.movimiento_ids" t-as="linea">
+                                        <tr>
+                                            <td id="name_mov"><span t-field="linea.name"/></td>
+                                            <td id="tipo_mov"><span t-field="linea.tipo"/></td>
+                                            <td id="subtarea_destino_id_mov"><span t-field="linea.subtarea_destino_id"/></td>
+                                            <td id="cantidad_captura_mov"><span t-field="linea.cantidad_captura"/></td>
+                                            <td id="fecha_movimiento_mov"><span t-field="linea.fecha_movimiento"/></td>
+                                            <td id="nota_salida_mov"><span t-field="linea.nota_salida"/></td>
+                                            <td id="enviado_mov"><span t-field="linea.enviado"/></td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                            <div id="fila-5" class="row mt32 mb32">
+                                <div class="col-8 bm-2">
+                                    <strong></strong>
+                                </div>
+                                <div class="col-4 bm-2">
+                                    <div class="row justify-content-end">
+                                        <table class="table table-sm">
+                                            <tbody>
+                                                <tr>
+                                                    <td>Recibido:</td>
+                                                    <td class="text-right"><span t-field="o.cantidad_recibida"/></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Liquidado:</td>
+                                                    <td class="text-right"><span t-field="o.cantidad_liquidada"/></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Por liquidar:</td>
+                                                    <td class="text-right"><span t-field="o.cantidad_por_liquidar"/></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <br/>
+                        <h3>Cantidades</h3>
+                        <div id="fila-6" class="row mt32 mb32">
+                            <div class="col-6 bm-2">
+                                <div class="row justify-content-end">
+                                    <table class="table table-sm">
+                                        <tbody>
+                                            <tr>
+                                                <td><strong>Cantidad Programada</strong></td>
+                                                <td><span t-field="o.cantidad_programada"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Cantidad de pedido</strong></td>
+                                                <td><span t-field="o.total_pedido"/></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="col-6 bm-2">
+                                <div class="row justify-content-end">
+                                    <table class="table table-sm">
+                                        <tbody>
+                                            <tr>
+                                                <td><strong>Cantidad solicitada</strong></td>
+                                                <td><span t-field="o.total_solicitado"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Cantidad cortada</strong></td>
+                                                <td><span t-field="o.total_corte"/></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <br/>
+                        <div t-if="o.child_ids">
+                            <h3>Sub-tareas</h3>
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th name="th_titulo" class="text-center"><strong>Título</strong></th>
+                                        <th name="th_proyecto" class="text-center"><strong>Proyecto</strong></th>
+                                        <th name="th_avance" class="text-center"><strong>Avance</strong></th>
+                                        <th name="th_etapa" class="text-center"><strong>Etapa</strong></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-set="num_subtarea" t-value="0" />
+                                    <t t-set="total_puntuacion" t-value="0" />
+                                    <t t-set="promedio_tarea" t-value="0" />
+                                    <t t-foreach="o.child_ids" t-as="linea">
+                                        <tr>
+                                            <t t-set="num_subtarea" t-value="num_subtarea+1"/>
+                                            <td id="name_mov">
+                                                <span t-field="linea.numero_tarea"/><br/>
+                                                <span t-field="linea.name"/><br/>
+                                                <div t-if="linea.numero_tarea" class="col-6 bm-2" style="padding-top:10px; padding-bottom:10px;">
+                                                    <img t-att-src="'/report/barcode/?type=%s&amp;value=%s&amp;width=%s&amp;height=%s' % ('Code128', linea.numero_tarea, 600, 150)" style="width:100%;height:4rem" alt="Barcode"/>
+                                                </div>
+                                            </td>
+                                            <td id="project_id_mov"><span t-field="linea.project_id"/></td>
+                                            <td id="puntuacion_mov"><span t-field="linea.puntuacion"/></td>
+                                            <t t-set="total_puntuacion" t-value="total_puntuacion+linea.puntuacion" />
+                                            <td id="stage_id_mov"><span t-field="linea.stage_id"/></td>
+                                            <t t-set="promedio_tarea" t-value="total_puntuacion/num_subtarea"/>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                            <br/>
+                            <div id="fila-6" class="row mt32 mb32">
+                                <h1>Avance:<t t-esc="promedio_tarea"/> %</h1>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+</odoo>

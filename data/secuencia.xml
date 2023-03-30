@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="secuencia_project_wip_especificacion" model="ir.sequence">
+        <field name="name">Secuencia para especificaciones</field>
+        <field name="implementation">no_gap</field>
+        <field name="code">secuencia.project.wip.especificacion</field>
+        <field name="prefix">ESP</field>
+        <field name="suffix">%(year)s%(month)s%(day)s</field>
+        <field name="padding">4</field>
+        <field name="number_increment">1</field>
+    </record>
+
+    <record id="secuencia_project_wip_task" model="ir.sequence">
+        <field name="name">Secuencia para tareas</field>
+        <field name="implementation">no_gap</field>
+        <field name="code">secuencia.project.wip.task</field>
+        <field name="prefix">CO%(year)s%(month)s%(day)s</field>
+        <field name="suffix"></field>
+        <field name="padding">5</field>
+        <field name="number_increment">1</field>
+    </record>
+
+    <record id="secuencia_project_wip_task_seqoc1" model="ir.sequence">
+        <field name="name">Secuencia para tareas SEQOC1</field>
+        <field name="implementation">no_gap</field>
+        <field name="code">secuencia.project.wip.task.seqoc1</field>
+        <field name="prefix">SEQOC1</field>
+        <field name="suffix"></field>
+        <field name="padding">4</field>
+        <field name="number_increment">1</field>
+    </record>
+
+    <record id="secuencia_project_wip_task_seqoc2" model="ir.sequence">
+        <field name="name">Secuencia para tareas SEQOC2</field>
+        <field name="implementation">no_gap</field>
+        <field name="code">secuencia.project.wip.task.seqoc2</field>
+        <field name="prefix">SEQOC2</field>
+        <field name="suffix"></field>
+        <field name="padding">4</field>
+        <field name="number_increment">1</field>
+    </record>
+
+    <record id="secuencia_project_wip_task_seqoc3" model="ir.sequence">
+        <field name="name">Secuencia para tareas SEQOC3</field>
+        <field name="implementation">no_gap</field>
+        <field name="code">secuencia.project.wip.task.seqoc3</field>
+        <field name="prefix">SEQOC3</field>
+        <field name="suffix"></field>
+        <field name="padding">4</field>
+        <field name="number_increment">1</field>
+    </record>
+
+    <record id="secuencia_project_wip_task_seqoc4" model="ir.sequence">
+        <field name="name">Secuencia para tareas SEQOC4</field>
+        <field name="implementation">no_gap</field>
+        <field name="code">secuencia.project.wip.task.seqoc4</field>
+        <field name="prefix">SEQOC4</field>
+        <field name="suffix"></field>
+        <field name="padding">4</field>
+        <field name="number_increment">1</field>
+    </record>
+
+    <record id="secuencia_project_wip_task_seqoc5" model="ir.sequence">
+        <field name="name">Secuencia para tareas SEQOC5</field>
+        <field name="implementation">no_gap</field>
+        <field name="code">secuencia.project.wip.task.seqoc5</field>
+        <field name="prefix">SEQOC5</field>
+        <field name="suffix"></field>
+        <field name="padding">4</field>
+        <field name="number_increment">1</field>
+    </record>
+
+    <record id="secuencia_project_wip_task_seqoc6" model="ir.sequence">
+        <field name="name">Secuencia para tareas SEQOC6</field>
+        <field name="implementation">no_gap</field>
+        <field name="code">secuencia.project.wip.task.seqoc6</field>
+        <field name="prefix">SEQOC6</field>
+        <field name="suffix"></field>
+        <field name="padding">4</field>
+        <field name="number_increment">1</field>
+    </record>
+
+    <record id="secuencia_project_wip_pedido" model="ir.sequence">
+        <field name="name">Secuencia para pedidos</field>
+        <field name="implementation">no_gap</field>
+        <field name="code">secuencia.project.wip.pedido</field>
+        <field name="prefix">CPO%(year)s</field>
+        <field name="padding">4</field>
+        <field name="number_increment">1</field>
+    </record>
+
+    <record id="secuencia_project_wip_task_movimiento" model="ir.sequence">
+        <field name="name">Secuencia para movimientos</field>
+        <field name="implementation">no_gap</field>
+        <field name="code">secuencia.project.wip.task.movimiento</field>
+        <field name="prefix">MOV</field>
+        <field name="padding">6</field>
+        <field name="number_increment">1</field>
+    </record>
+
+    <record id="secuencia_project_wip_desglose" model="ir.sequence">
+        <field name="name">Secuencia para desglose</field>
+        <field name="implementation">no_gap</field>
+        <field name="code">secuencia.project.wip.desglose</field>
+        <field name="prefix">DT</field>
+        <field name="padding">6</field>
+        <field name="number_increment">1</field>
+    </record>
+
+    <record id="secuencia_project_wip_bulto" model="ir.sequence">
+        <field name="name">Secuencia para bultos</field>
+        <field name="implementation">no_gap</field>
+        <field name="code">secuencia.project.wip.bulto</field>
+        <field name="prefix">B</field>
+        <field name="padding">6</field>
+        <field name="number_increment">1</field>
+    </record>
+
+    <record id="secuencia_project_wip_nota_salida" model="ir.sequence">
+        <field name="name">Secuencia para notas de salida</field>
+        <field name="implementation">no_gap</field>
+        <field name="code">secuencia.project.wip.nota.salida</field>
+        <field name="prefix">NS</field>
+        <field name="padding">6</field>
+        <field name="number_increment">1</field>
+    </record>
+
+    <record id="secuencia_project_wip_nota_salida_complemento" model="ir.sequence">
+        <field name="name">Secuencia para notas complemento</field>
+        <field name="implementation">no_gap</field>
+        <field name="code">secuencia.project.wip.nota.salida.complemento</field>
+        <field name="prefix">NSC</field>
+        <field name="padding">5</field>
+        <field name="number_increment">1</field>
+    </record>
+
+    <record id="secuencia_project_wip_tabla_uno" model="ir.sequence">
+        <field name="name">Secuencia para movimiento en incremento de pedido</field>
+        <field name="implementation">no_gap</field>
+        <field name="code">secuencia.project.wip.tabla.uno</field>
+        <field name="prefix">MOV</field>
+        <field name="padding">4</field>
+        <field name="number_increment">1</field>
+    </record>
+
+</odoo>

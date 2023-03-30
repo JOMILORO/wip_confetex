@@ -1,0 +1,328 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Busquedas,filtros y agrupaciones para el modelo desglose (project.wip.desglose) -->
+        <record id="view_project_wip_desglose_search" model="ir.ui.view">
+            <field name="name">view.project.wip.desglose.search</field>
+            <field name="model">project.wip.desglose</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="name" string="Folio" filter_domain="[('name', 'ilike', self)]"/>
+                    <field name="numero_estilo" string="Número Estilo" filter_domain="['|', '|',
+                        ('numero_estilo', 'ilike', self),
+                        ('numero_orden', 'ilike', self),
+                        ('numero_oc', 'ilike', self)]"/>
+                    <filter name="filter_forro" string="Forro" domain="[('categoria_id.name', 'ilike', 'forro')]"/>
+                    <filter name="filter_fusion" string="Fusión" domain="[('categoria_id.name', 'ilike', 'fusión')]"/>
+                    <filter name="filter_trazo" string="Trazo" domain="[('categoria_id.name', 'ilike', 'trazo')]"/>
+                    <separator/>
+                    <filter name="filter_state_borrador" string="Edo. Borrador" domain="[('state', '=', 'borrador')]"/>
+                    <filter name="filter_state_desglose" string="Edo. Desglose" domain="[('state', '=', 'desglose')]"/>
+                    <filter name="filter_state_trazo" string="Edo. Trazo" domain="[('state', '=', 'trazo')]"/>
+                    <filter name="filter_state_finalizado" string="Edo. Finalizado" domain="[('state', '=', 'finalizado')]"/>
+                    <filter name="filter_state_bulto" string="Edo. Bulto" domain="[('state', '=', 'bulto')]"/>
+                    <filter name="filter_state_hecho" string="Edo. Hecho" domain="[('state', '=', 'hecho')]"/>
+                    <group>
+                        <filter name="group_by_cliente" string="Cliente" context="{'group_by': 'partner_id'}"/>
+                        <filter name="group_by_categoria" string="Categoría" context="{'group_by': 'categoria_id'}"/>
+                        <filter name="group_by_estado" string="Estado" context="{'group_by': 'state'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <!-- Acción para abrir Bultos -->
+        <record id="action_open_wip_bultos_pivot" model="ir.actions.act_window">
+        <field name="name">Pivote</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">project.wip.bulto</field>
+        <field name="view_mode">pivot,tree</field>
+        <field name="domain">[('desglose_id', '=', default_name)]</field>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+                Aún no hay ningún bulto, por favor crea uno desde desglose
+            </p><p>
+            <!-- More details about what a user can do with this object will be OK -->
+            Un bulto debe ser creado dedes un desglose, aquí no podrás crear, esta vista es solo para
+            consulta y filtros.
+            </p>
+        </field>
+    </record>
+
+        <!-- Formulario para el modelo desglose (project.wip.desglose) -->
+        <record id="view_project_wip_desglose_form" model="ir.ui.view">
+            <field name="name">view.project.wip.desglose.form</field>
+            <field name="model">project.wip.desglose</field>
+            <field name="arch" type="xml">
+                <form string="Desglose de trazo">
+                    <header>
+                        <button string="Desglosar" type="object" name="capturar_desglose" class="oe_highlight" states="borrador"/>
+                        <button string="Trazar" type="object" name="trazar_desglose" class="oe_highlight" states="desglose"/>
+                        <button string="Finalizar" type="object" name="finalizar_desglose" class="oe_highlight" states="trazo"/>
+                        <button string="Capturar bulto" type="object" name="capturar_bulto" class="oe_highlight" states="finalizado"/>
+                        <button string="Hecho" type="object" name="finalizar_bulto" class="oe_highlight" states="bulto"/>
+                        <button string="Cancelar" type="object" name="cancelar_desglose" states="borrador,desglose,trazo,finalizado,bulto,hecho"/>
+                        <field name="state" widget="statusbar" statusbar_visible="borrador,desglose,trazo,finalizado,bulto,hecho" statusbar_colors="{'KEY_IS_STATE':'VALUE_IS_COLOR'}"/>
+                    </header>
+                    <sheet>
+                        <widget name="web_ribbon" title="Archivado" bg-color="bg-danger" attrs="{'invisible': [('active','=',True)]}"/>
+                        <field name="active" invisible="1"/>
+                        <div class="oe_title">
+                            <h1><field name="name"/></h1>
+                        </div>
+                        <group>
+                            <field name="url" widget="url" attrs="{'invisible':[('state', '=', 'borrador')], 'readonly': [('state','!=','desglose')]}"/>
+                        </group>
+                        <group string="Información de tarea">
+                            <group>
+                                <field name="tarea_id" domain="[('project_id','in',[proyecto_id]), ('stage_id', 'not in', [stage_id])]"
+                                       options="{'no_create': True}" attrs="{'readonly': [('state','!=','borrador')]}"/>
+                                <field name="proyecto_id" invisible="1"/>
+                                <field name="stage_id" invisible="1"/>
+                                <field name="numero_orden"/>
+                                <field name="numero_estilo"/>
+                                <field name="numero_oc"/>
+                            </group>
+                            <group>
+                                <field name="color_estilo" string="Lavado"/>
+                                <field name="numero_linea"/>
+                                <field name="partner_id" options="{'no_open': True}"/>
+                                <field name="partner_shipping_id" options="{'no_create': True, 'no_open': True}"/>
+                            </group>
+                        </group>
+                        <group string="Información de desglose">
+                            <group>
+                                <field name="categoria_id" attrs="{'readonly': [('state','!=','borrador')]}"/>
+                                <field name="cantidad_asignada" attrs="{'readonly': ['|', '|', '|', ('state','=','finalizado'), ('state','=','cancelado'), ('state','=','bulto'), ('state','=','hecho')]}"/>
+                                <field name="cantidad_total" attrs="{'readonly': ['|', '|', ('state','=','finalizado'), ('state','=','cancelado'), ('state','=','hecho')]}"/>
+                                <field name="diferencia"/>
+                            </group>
+                            <group>
+                                <field name="tag_ids" widget="many2many_tags" attrs="{'readonly': [('state','!=','borrador')]}"/>
+                                <field name="write_date" string="Fecha desglose"/>
+                                <field name="fecha_fin" string="Fecha fin" attrs="{'invisible':[('state','!=','finalizado')]}"/>
+                            </group>
+                        </group>
+                        <separator string="Detalles"/>
+                        <notebook>
+                            <page string="Tela">
+                                <group>
+                                    <field name="producto_tela_id" string="Nombre" attrs="{'readonly': ['|', '|', '|', ('state','=','finalizado'), ('state','=','cancelado'), ('state','=','bulto'), ('state','=','hecho')]}"
+                                            domain="[('categ_id.name','=', [categoria_nombre])]" options="{'no_create': True, 'no_open': True}"/>
+                                    <field name="categoria_nombre" invisible="1"/>
+                                </group>
+                                <group>
+                                    <group>
+                                        <field name="ancho_tela" string="A.T." attrs="{'readonly': ['|', '|', '|', ('state','=','finalizado'), ('state','=','cancelado'), ('state','=','bulto'), ('state','=','hecho')]}"/>
+                                        <field name="promedio_final_trazo" attrs="{'readonly': ['|', '|', '|', ('state','=','finalizado'), ('state','=','cancelado'), ('state','=','bulto'), ('state','=','hecho')]}"/>
+                                        <field name="uom_tela_id" attrs="{'readonly': ['|', '|', '|', ('state','=','finalizado'), ('state','=','cancelado'), ('state','=','bulto'), ('state','=','hecho')]}"/>
+                                    </group>
+                                    <group>
+                                        <field name="metros_totales_tela" string="Metros totales" attrs="{'readonly': ['|', '|', ('state','=','finalizado'), ('state','=','cancelado'), ('state','=','hecho')]}"/>
+                                        <field name="promedio" attrs="{'readonly': ['|', '|', ('state','=','finalizado'), ('state','=','cancelado'), ('state','=','hecho')]}"/>
+                                    </group>
+                                </group>
+                                <group col="6" class="mt-2 mt-md-0">
+                                    <group colspan="4">
+                                        <field name="observacion_tela" attrs="{'readonly': ['|', '|', '|', ('state','=','finalizado'), ('state','=','cancelado'), ('state','=','bulto'), ('state','=','hecho')]}"/>
+                                    </group>
+                                </group>
+                            </page>
+                            <page string="Partidas">
+                                <field name="partida_ids" attrs="{'readonly': ['|', '|', ('state','=','finalizado'), ('state','=','cancelado'), ('state','=','hecho')]}" nolabel="1" style="padding: 10px;"/>
+                                <group col="6" class="mt-2 mt-md-0">
+                                    <group colspan="4">
+                                        <field name="observacion_partida" attrs="{'readonly': ['|', '|', '|', ('state','=','finalizado'), ('state','=','cancelado'), ('state','=','bulto'), ('state','=','hecho')]}"/>
+                                    </group>
+                                </group>
+                            </page>
+                            <page string="Bultos" attrs="{'invisible':[('state', 'in', ['borrador', 'desglose', 'trazo', 'finalizado'])]}">
+                                <group>
+                                    <group>
+                                        <field name="fecha_inicio_bulto" readonly="1"/>
+                                    </group>
+                                    <group>
+                                        <field name="fecha_fin_bulto" readonly="1" attrs="{'invisible':[('state','!=','hecho')]}"/>
+                                    </group>
+                                </group>
+                                <button name="generar_subtotales_bulto" type="object" string="Sub-totales" class="oe_highlight" attrs="{'invisible':[('state','=','hecho')]}" style="margin-right:5px; margin-bottom:10px;"/>
+                                <button string="Pivote" type="action" name="%(action_open_wip_bultos_pivot)d" context="{'default_name': name}" style="margin-bottom:10px;"/>
+                                <field name="bultos_ids" attrs="{'readonly': [('state', 'in', ['hecho', 'cancelado'])]}">
+                                    <tree editable="bottom"  decoration-muted="nemo == 'BFTL'"  decoration-danger="nemo == 'BFT'">
+                                        <control>
+                                            <create name="add_product_control" string="Agregar bulto"/>
+                                        </control>
+                                        <field name="name" optional="show"/>
+                                        <field name="sequence" widget="handle" optional="show"/>
+                                        <field name="bulto_no"/>
+                                        <field name="trazo_numero"/>
+                                        <field name="letra"/>
+                                        <field name="cantidad_1" string="Cantidad"/>
+                                        <field name="barcode" optional="show"/>
+                                        <field name="talla"/>
+                                        <field name="largo"/>
+                                        <field name="nemo"/>
+                                        <field name="cantidad_2" string="Total trazo" optional="show" readonly="1"/>
+                                        <field name="cantidad_3"  string="Total largo" optional="show" readonly="1"/>
+                                    </tree>
+                                </field>
+                                <group col="6" class="mt-2 mt-md-0">
+                                    <group colspan="4">
+                                        <field name="observacion_bulto"/>
+                                    </group>
+                                    <group class="oe_subtotal_footer oe_right" colspan="2">
+                                        <field name="total_cantidad_bulto"/>
+                                    </group>
+                                </group>
+                            </page>
+                            <page string="Observaciones">
+                                <group>
+                                    <field name="observacion_general" attrs="{'readonly': ['|', '|', ('state','=','finalizado'), ('state','=','cancelado'), ('state','=','hecho')]}"/>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids"/>
+                        <field name="activity_ids"/>
+                        <field name="message_ids"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <!-- Listado para el modelo desglose (project.wip.desglose) -->
+        <record id="view_project_wip_desglose_tree" model="ir.ui.view">
+            <field name="name">Vista lista para desglose</field>
+            <field name="model">project.wip.desglose</field>
+            <field name="arch" type="xml">
+                <tree decoration-muted="state == 'cancelado'" decoration-success="state == 'finalizado'" decoration-primary="state == 'hecho'">
+                    <field name="name"/>
+                    <field name="url" string="G-Drive" widget="url" text="Desglose"/>
+                    <field name="tarea_id" optional="show"/>
+                    <field name="write_date" string="Fecha" optional="show"/>
+                    <field name="numero_orden" optional="show"/>
+                    <field name="numero_estilo" optional="show"/>
+                    <field name="numero_oc" optional="show"/>
+                    <field name="numero_linea" optional="show"/>
+                    <field name="cantidad_total" sum="Cantidad total"/>
+                    <field name="producto_tela_id" optional="show"/>
+                    <field name="ancho_tela" optional="show"/>
+                    <field name="promedio_final_trazo" optional="show"/>
+                    <field name="metros_totales_tela" optional="show" string="Metros totales"/>
+                    <field name="promedio" optional="show"/>
+                    <field name="partner_id"/>
+                    <field name="tag_ids"  widget="many2many_tags" optional="show"/>
+                    <field name="state" widget="badge" decoration-success="state == 'finalizado'" decoration-danger="state == 'cancelado'" decoration-primary="state == 'hecho'"/>
+                    <field name="categoria_id" optional="show"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Vista Kanban para el modelo desglose (project.wip.desglose) -->
+        <record id="view_project_wip_desglose_kanban" model="ir.ui.view">
+            <field name="name">Vista kanban para desglose</field>
+            <field name="model">project.wip.desglose</field>
+            <field name="arch" type="xml">
+                <kanban default_group_by="categoria_id" class="o_kanban_small_column o_kanban_project_tasks">
+                    <field name="categoria_id"/>
+                    <field name="numero_orden"/>
+                    <field name="numero_estilo"/>
+                    <field name="numero_oc"/>
+                    <field name="numero_linea"/>
+                    <field name="partner_id"/>
+                    <field name="tag_ids"/>
+                    <field name="url"/>
+                    <field name="cantidad_total"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div class="oe_kanban_global_click">
+                                <div class="oe_kanban_details">
+                                    <strong class="o_kanban_record_title">
+                                        <field name="tarea_id"/>
+                                    </strong>
+                                    <br/>
+                                    <span t-if="record.name.value">[<field name="name"/>]</span>
+                                    <span t-if="record.numero_estilo.value">Estilo:<field name="numero_estilo"/></span>
+                                    <span t-if="record.numero_orden.value">PO:<field name="numero_orden"/></span>
+                                    <span t-if="record.numero_oc.value">OC:<field name="numero_oc"/></span>
+                                    <span t-if="record.numero_linea.value">Linea:<field name="numero_linea"/></span>
+                                    <span t-if="record.cantidad_total.value">Cantidad:<field name="cantidad_total"/> </span>
+                                    <br/>
+                                    <t t-if="record.partner_id.value">
+                                        <field name="partner_id"/>
+                                    </t>
+                                    <t t-if="record.tag_ids.value">
+                                        <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}" invisible="context.get('fsm_mode', False)"/>
+                                    </t>
+                                    <div t-if="record.url.value">
+                                        <field name="url" string="G-Drive" widget="url" text="Ver desglose"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+        <!-- Busquedas,filtros y agrupaciones para el modelo bulto (project.wip.bulto) -->
+        <record id="view_project_wip_bulto_search" model="ir.ui.view">
+            <field name="name">view.project.wip.bulto.search</field>
+            <field name="model">project.wip.bulto</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="desglose_id" string="Desglose" filter_domain="[('desglose_id', 'ilike', self)]"/>
+                    <field name="name" string="Identificador" filter_domain="[('name', 'ilike', self)]"/>
+                    <field name="numero_estilo" string="Número Estilo" filter_domain="['|', '|',
+                        ('numero_estilo', 'ilike', self),
+                        ('numero_orden', 'ilike', self),
+                        ('numero_oc', 'ilike', self)]"/>
+                </search>
+            </field>
+        </record>
+
+        <!-- Listado para el modelo bultos (project.wip.bulto) -->
+        <record id="view_project_wip_bulto_tree" model="ir.ui.view">
+            <field name="name">view.project.wip.bulto.tree</field>
+            <field name="model">project.wip.bulto</field>
+            <field name="arch" type="xml">
+                <tree string="Bultos" create="false" decoration-muted="nemo == 'BFTL'"  decoration-danger="nemo == 'BFT'">
+                    <field name="name"/>
+                    <field name="desglose_id"/>
+                    <field name="numero_oc" optional="show"/>
+                    <field name="numero_estilo" optional="show"/>
+                    <field name="numero_orden" optional="show"/>
+                    <field name="letra"/>
+                    <field name="bulto_no"/>
+                    <field name="barcode" optional="show"/>
+                    <field name="talla"/>
+                    <field name="cantidad_1" string="Cantidad" sum="Cantidad total"/>
+                    <field name="largo"/>
+                    <field name="cantidad_2" string="Total trazo" optional="show" sum="Cantidad por trazo"/>
+                    <field name="cantidad_3" string="Total largo" optional="show" sum="Cantidad por largo"/>
+                    <field name="nemo"/>
+                    <field name="proporcion" optional="show"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Pivote para el modelo bulto (project.wip.desglose.partida) -->
+        <record id="view_project_wip_bulto_pivot" model="ir.ui.view">
+            <field name="name">view.project.wip.bulto.pivot</field>
+            <field name="model">project.wip.bulto</field>
+            <field name="arch" type="xml">
+                <pivot string="Bultos" sample="1">
+                    <field name="desglose_id" type="row"/>
+                    <field name="largo" type="row"/>
+                    <field name="trazo_numero" type="row"/>
+                    <field name="talla" type="col"/>
+                    <field name="proporcion" type="measure" string="Prop."/>
+                    <field name="cantidad_1" type="measure" string="Cantidad"/>
+                </pivot>
+            </field>
+        </record>
+
+    </data>
+</odoo>

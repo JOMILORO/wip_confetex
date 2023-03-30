@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Busquedas,filtros y agrupaciones para el modelo líneas de proceso (project.wip.linea.proceso) -->
+
+        <!-- Formulario para el modelo líneas de proceso (project.wip.linea.proceso) -->
+        <record id="view_project_wip_linea_proceso_form" model="ir.ui.view">
+            <field name="name">Vista formulario para Lineas de Proceso</field>
+            <field name="model">project.wip.linea.proceso</field>
+            <field name="arch" type="xml">
+                <form string="">
+                    <sheet>
+                        <widget name="web_ribbon" title="Archivado" bg-color="bg-danger" attrs="{'invisible': [('active','=',True)]}"/>
+                        <div class="oe_title">
+                            <field name="active" invisible="1"/>
+                            <label class="oe_edit_only" for="name" string="Nombre de la linea de proceso"/>
+                            <h1><field name="name" placeholder="Nombre de la linea de proceso" default_focus="1"/></h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="responsable_id"/>
+                                <field name="proyecto_id" domain="[('es_proyecto_general', '=', False)]"/>
+                                <field name="etapa_inicial_id" domain="[('project_ids', 'in', [proyecto_id])]"/>
+                            </group>
+                            <group>
+                                <field name="valor_por_defecto" widget="boolean_toggle"/>
+                                <field name="es_primer_proceso" widget="boolean_toggle"/>
+                                <field name="seguimiento" widget="boolean_toggle"/>
+                                <field name="sequence" readonly="1"/>
+                            </group>
+                        </group>
+                        <div>
+                            <label for="descripcion" string="Descripción"/>
+                            <field name="descripcion"/>
+                        </div>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Listado para el modelo líneas de proceso (project.wip.linea.proceso) -->
+        <record id="view_project_wip_linea_proceso_tree" model="ir.ui.view">
+            <field name="name">Vista Lista para líneas de proceso</field>
+            <field name="model">project.wip.linea.proceso</field>
+            <field name="arch" type="xml">
+                <tree string="">
+                    <field name="sequence" optional="show" widget="handle"/>
+                    <field name="name"/>
+                    <field name="responsable_id" optional="show"/>
+                    <field name="proyecto_id"/>
+                    <field name="etapa_inicial_id"/>
+                    <field name="valor_por_defecto" optional="show" widget="boolean_toggle"/>
+                    <field name="es_primer_proceso" optional="show" widget="boolean_toggle"/>
+                    <field name="seguimiento" optional="show" widget="boolean_toggle"/>
+                </tree>
+            </field>
+        </record>
+
+    </data>
+</odoo>

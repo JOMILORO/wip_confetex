@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Busquedas,filtros y agrupaciones para el modelo Lista de Precios (sale.wip.lista.precios) -->
+        <record id="view_sale_wip_lista_precios_search" model="ir.ui.view">
+            <field name="name">view.sale.wip.lista.precios.search</field>
+            <field name="model">sale.wip.lista.precios</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="name" string="Nombre" filter_domain="[('name', 'ilike', self)]"/>
+                    <field name="numero_estilo" string="Número Estilo" filter_domain="['|', '|',
+                        ('numero_estilo', 'ilike', self),
+                        ('numero_orden', 'ilike', self),
+                        ('numero_oc', 'ilike', self)]"/>
+                </search>
+            </field>
+        </record>
+
+        <!-- Formulario para el modelo Lista de Precios (sale.wip.lista.precios) -->
+        <record id="view_sale_wip_lista_precios_form" model="ir.ui.view">
+            <field name="name">view.sale.wip.lista.precios.form</field>
+            <field name="model">sale.wip.lista.precios</field>
+            <field name="arch" type="xml">
+                <form string="Pedido">
+                    <sheet>
+                        <div class="oe_title">
+                            <h1><field name="name"/></h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="numero_orden"/>
+                                <field name="numero_estilo"/>
+                                <field name="numero_oc"/>
+                                <field name="numero_linea"/>
+                            </group>
+                            <group>
+                                <field name="partner_id" domain="[('category_id','in',[category_partner_id])]" options="{'no_create': True, 'no_open': True}"/>
+                                <field name="category_partner_id" invisible="1"/>
+                                <field name="precio" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                <field name="currency_id"/>
+                            </group>
+                        </group>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids"/>
+                        <field name="activity_ids"/>
+                        <field name="message_ids"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <!-- Listado para el modelo Lista de precios (sale.wip.lista.precios) -->
+        <record id="view_sale_wip_lista_precios_tree" model="ir.ui.view">
+            <field name="name">view.sale.wip.lista.precios.tree</field>
+            <field name="model">sale.wip.lista.precios</field>
+            <field name="arch" type="xml">
+                <tree string="Listado de precios">
+                    <field name="name"/>
+                    <field name="numero_orden"/>
+                    <field name="numero_estilo"/>
+                    <field name="numero_oc" optional="show"/>
+                    <field name="numero_linea" optional="show"/>
+                    <field name="partner_id"/>
+                    <field name="precio"/>
+                    <field name="currency_id"/>
+                </tree>
+            </field>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="view_estilo_task_wizard_form" model="ir.ui.view">
+            <field name="name">view.estilo.task.wizard</field>
+            <field name="model">estilo.task.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Crear Tarea">
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="Tarea de Proyecto" /></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="numero_orden"/>
+                            <field name="numero_linea"/>
+                            <field name="partner_shipping_id" domain="[('type', '=', 'delivery'), ('parent_id', '=', [cliente_id])]"/>
+                            <field name="cliente_id" invisible="1"/>
+                            <field name="project_id" domain="[('active', '=', True), ('es_proyecto_general', '=', True)]" />
+                            <field name="user_id" class="o_task_user_field" options="{'no_open': True}"/>
+                        </group>
+                        <group>
+                            <field name="fecha_orden"/>
+                            <field name="dead_line"/>
+                            <field name="cantidad_programada"/>
+                        </group>
+                    </group>
+                    <footer>
+                        <button name="create_task" type="object" string="Crear Tarea"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+    </data>
+</odoo>

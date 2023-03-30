@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Busquedas,filtros y agrupaciones para el modelo especificacion tags -->
+        <record id="view_project_wip_especificacion_tags_search" model="ir.ui.view">
+            <field name="name">Etiquetas</field>
+            <field name="model">project.wip.especificacion.tags</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="name" string="Nombre"/>
+                </search>
+            </field>
+        </record>
+
+        <!-- Formulario para el modelo especificacion tags -->
+        <record id="view_project_wip_especificacion_tags_form" model="ir.ui.view">
+            <field name="name">Vista formulario para especificación tags</field>
+            <field name="model">project.wip.especificacion.tags</field>
+            <field name="arch" type="xml">
+                <form string="Etiquetas">
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                            <field name="nombre_corto"/>
+                            <field name="carpeta_drive" widget="url"/>
+                            <field name="directorio_unidad_compartida"/>
+                            <field name="categoria_id"/>
+                            <field name="color" widget="color_picker"/>
+                            <field name="descripcion"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Listado para el modelo especificacion tags -->
+        <record id="view_project_wip_especificacion_tags_tree" model="ir.ui.view">
+            <field name="name">Vista lista de etiquetas especificación</field>
+            <field name="model">project.wip.especificacion.tags</field>
+            <field name="arch" type="xml">
+                <tree string="Etiquetas">
+                    <field name="carpeta_drive" widget="url" text="Visitar Carpeta"/>
+                    <field name="name"/>
+                    <field name="nombre_corto"/>
+                    <field name="categoria_id"/>
+                    <field name="color" widget="color_picker"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Kanban para el modelo especificacion tags -->
+        <record id="view_project_wip_especificacion_tags_kanban" model="ir.ui.view">
+            <field name="name">Vista kanban para etiquetas especificación</field>
+            <field name="model">project.wip.especificacion.tags</field>
+            <field name="arch" type="xml">
+                <kanban class="oe_background_grey o_kanban_dashboard o_project_kanban o_emphasize_colors">
+                    <field name="name"/>
+                    <field name="nombre_corto"/>
+                    <field name="carpeta_drive"/>
+                    <field name="color"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div t-attf-class="#{kanban_color(record.color.raw_value)} oe_kanban_global_click o_has_icon">
+                                <div class="o_project_kanban_main">
+                                    <div class="o_kanban_card_content">
+                                        <div class="o_kanban_primary_left">
+                                            <div class="o_primary">
+                                                <b><t t-esc="record.name.value"/></b>
+                                            </div>
+                                            <div t-if="record.nombre_corto.value">
+                                                <t t-esc="record.nombre_corto.value"/>
+                                            </div>
+                                            <div t-if="record.carpeta_drive.value">
+                                                <field name="carpeta_drive" widget="url" text="Visitar Carpeta"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="o_kanban_card_manage_pane dropdown-menu" role="menu">
+                                        <div role="menuitem">
+                                            <a type="edit">Edit</a>
+                                        </div>
+                                        <div role="menuitem" aria-haspopup="true" class="o_no_padding_kanban_colorpicker">
+                                            <ul class="oe_kanban_colorpicker" data-field="color" role="popup"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+    </data>
+</odoo>

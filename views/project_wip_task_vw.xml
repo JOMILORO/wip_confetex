@@ -1,0 +1,313 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        Inherit Search View to Modify it
+        <record id="view_project_task_inherit_search" model="ir.ui.view">
+            <field name="name">view.project.task.inherit.search</field>
+            <field name="model">project.task</field>
+            <field name="inherit_id" ref="project.view_task_search_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='name']" position="before">
+                    <field name="numero_estilo" string="Número Estilo" filter_domain="['|', '|', '|',
+                    ('numero_estilo', 'ilike', self),
+                    ('numero_orden', 'ilike', self),
+                    ('numero_oc', 'ilike', self),
+                    ('numero_tarea', 'ilike', self)]"/>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Inherit Search View to Modify it -->
+        <record id="view_project_task_inherit_search2" model="ir.ui.view">
+            <field name="name">view.project.task.inherit.search2</field>
+            <field name="model">project.task</field>
+            <field name="inherit_id" ref="project.view_task_search_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//filter[@name='group_create_date']" position="after">
+                    <filter name="group_by_cliente" string="Cliente" context="{'group_by': 'partner_id'}"/>
+                    <filter name="group_by_dir_entrega" string="Dirección entrega" context="{'group_by': 'partner_shipping_id'}"/>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Inherit Form View to Modify it -->
+        <record id="view_project_wip_task_inherit_form" model="ir.ui.view">
+            <field name="name">view.project.wip.task.inherit.form</field>
+            <field name="model">project.task</field>
+            <field name="inherit_id" ref="project.view_task_form2"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='project_id']" position="before">
+                   <!-- Add your fields or attributes here -->
+                    <field name="numero_tarea"/>
+                </xpath>
+                <notebook position="inside">
+                    <page string="Orden producción">
+                        <group>
+                            <group string="Información">
+                                <field name="estilo_id" string="Nombre" options="{'no_create': True}" attrs="{'readonly': [('editar_tarea','!=', True)]}"/>
+                                <field name="numero_estilo" string="Estilo" attrs="{'readonly': [('editar_tarea','!=', True)]}"/>
+                                <field name="numero_orden" string="Orden" attrs="{'readonly': [('editar_tarea','!=', True)]}"/>
+                                <field name="color_estilo" attrs="{'readonly': [('editar_tarea','!=', True)]}"/>
+                                <field name="numero_linea" string="Linea" attrs="{'readonly': [('editar_tarea','!=', True)]}"/>
+                                <field name="numero_oc" attrs="{'readonly': [('editar_tarea','!=', True)]}"/>
+                                <field name="descripcion_corta" string="Descripción OC" attrs="{'readonly': [('editar_tarea','!=', True)]}"/>
+                                <field name="editar_tarea" invisible="1"/>
+                            </group>
+                            <group string="Programación">
+                                <field name="fecha_orden" string="Inicio"/>
+                                <field name="fecha_cancelacion" string="Finalización"/>
+                                <field name="mes_programacion" string="Mes"/>
+                                <field name="ayio_programacion" string="Año"/>
+                                <field name="dias_proceso"/>
+                            </group>
+                        </group>
+                        <group>
+                            <group string="Especificación">
+                                <field name="especificacion_id" domain="[('state', '=', 'aprobado'), ('numero_estilo', '=', [numero_estilo])]" options="{'no_create': True}"
+                                       attrs="{'readonly': [('editar_tarea','!=', True)]}"/>
+                                <field name="especificacion_url" string="Google Drive" widget="url" text="Ver especificación"/>
+                            </group>
+                            <group string="Tela">
+                                <field name="producto_tela_id" domain="[('purchase_ok','=',True)]" options="{'no_create': True, 'no_create_edit':True}"/>
+                                <field name="producto_pocketing_id" domain="[('purchase_ok','=',True)]" options="{'no_create': True, 'no_create_edit':True}"/>
+                            </group>
+                        </group>
+                        <group>
+                            <group string="Fechas">
+                                <field name="fecha_orden2" attrs="{'invisible':[('fecha_orden2', '=', False)]}" string="Orden"/>
+                                <field name="fecha_trazo" attrs="{'invisible':[('fecha_trazo', '=', False)]}" string="Trazo"/>
+                                <field name="fecha_corte" attrs="{'invisible':[('fecha_corte', '=', False)]}" string="Corte"/>
+                            </group>
+                            <group></group>
+                        </group>
+                    </page>
+                    <page string="Procesos">
+                        <field name="detalle_linea_proceso_ids">
+                            <tree editable="bottom">
+                                <control>
+                                    <create name="add_product_control" string="Agregar línea de proceso"/>
+                                </control>
+                                <field name="sequence" optional="show" widget="handle"/>
+                                <field name="name" options="{'no_create': True, 'no_open': True}"/>
+                                <field name="responsable_id" options="{'no_create': True, 'no_open': True}"/>
+                                <field name="proyecto_id" domain="[('es_proyecto_general', '=', False)]" options="{'no_create': True, 'no_open': True}"/>
+                                <field name="etapa_inicial_id" domain="[('project_ids', 'in', [proyecto_id])]" options="{'no_create': True, 'no_open': True}"/>
+                                <field name="fecha_orden"/>
+                                <field name="fecha_cancelacion"/>
+                                <field name="es_primer_proceso" optional="show" widget="boolean_toggle"/>
+                                <field name="seguimiento" optional="show" widget="boolean_toggle"/>
+                                <field name="tarea_procesada" optional="show"/>
+                            </tree>
+                        </field>
+                        <button name="crear_subtareas" type="object" string="Crear Sub-Tareas" class="oe_highlight"/>
+                    </page>
+                    <page string="Movimientos">
+                        <button name="enviar_cantidad_parcial" type="object" string="Enviar parcialidad" class="oe_highlight" style="margin-right:5px; margin-bottom:10px;"/>
+                        <button name="liquidar_cantidad" type="object" string="Liquidar tarea" style="margin-bottom:10px;"/>
+                        <field name="es_tarea_liquidada" invisible="1"/>
+                        <field name="movimiento_ids" attrs="{'readonly': [('es_tarea_liquidada','=', True)]}">
+<!--                            <tree editable="bottom">-->
+                            <tree>
+                                <control>
+                                    <create name="add_product_control" string="Agregar movimiento"/>
+                                </control>
+                                <field name="name"/>
+                                <field name="tipo"/>
+                                <field name="subtarea_destino_id" string="Origen/Destino" optional="show"/>
+                                <field name="descripcion"/>
+                                <field name="cantidad_captura"/>
+                                <field name="uom" optional="show"/>
+                                <field name="fecha_movimiento"/>
+                                <field name="nota_salida" optional="show"/>
+                                <field name="enviado" optional="show"/>
+                                <field name="state" optional="show"/>
+                            </tree>
+                        </field>
+                        <group col="6" class="mt-2 mt-md-0">
+                            <group colspan="4"></group>
+                            <group class="oe_subtotal_footer oe_right" colspan="2">
+                                <field name="cantidad_recibida"/>
+                                <field name="cantidad_liquidada"/>
+                                <div class="oe_subtotal_footer_separator oe_line o_td_label">
+                                    <label for="cantidad_por_liquidar"/>
+                                </div>
+                                <field name="cantidad_por_liquidar" nolabel="1" class="oe_subtotal_footer_separator"/>
+                            </group>
+                        </group>
+                    </page>
+                    <page string="Cantidades">
+                        <group>
+                            <group>
+                                <field name="cantidad_programada"/>
+                                <field name="total_pedido"/>
+                                <field name="total_solicitado"/>
+                                <field name="total_corte"/>
+                            </group>
+                        </group>
+                    </page>
+                </notebook>
+            </field>
+        </record>
+
+        <!-- Inherit Form View to Modify it -->
+        <record id="view_project_wip_task_inherit_form2" model="ir.ui.view">
+            <field name="name">view.project.wip.task.inherit.form2</field>
+            <field name="model">project.task</field>
+            <field name="inherit_id" ref="project.view_task_form2"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='parent_id']" position="after">
+                    <field name="fecha_entrega" attrs="{'readonly': [('editar_tarea','!=', True)]}"/>
+                </xpath>
+                <xpath expr="//field[@name='partner_id']" position="after">
+                    <!-- Add your fields or attributes here -->
+                    <field name="partner_shipping_id" domain="[('type', '=', 'delivery'), ('parent_id', '=', [partner_id])]"
+                           attrs="{'readonly': [('editar_tarea','!=', True)]}"/>
+                    <field name="cpo_id" string="Elemento del CPO" attrs="{'readonly': [('editar_tarea','!=', True)]}"/>
+                    <field name="editar_tarea" invisible="1"/>
+                    <field name="es_tarea_liquidada" widget="boolean_toggle"/>
+                </xpath>
+                <xpath expr="//field[@name='sale_line_id']" position="after">
+                    <field name="puntuacion" widget="percentpie" string=" "/>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Inherit Tree View to Modify it -->
+        <record id="view_project_task_inherit_tree" model="ir.ui.view">
+            <field name="name">view.project.task.inherit.tree</field>
+            <field name="model">project.task</field>
+            <field name="inherit_id" ref="project.view_task_tree2"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='name']" position="before">
+                    <!-- Add new fields here -->
+                    <field name="numero_tarea" optional="show"/>
+                    <field name="numero_estilo"/>
+                    <field name="numero_orden"/>
+                    <field name="numero_oc" optional="show"/>
+                    <field name="descripcion_corta" string="Descripción OC" optional="show"/>
+                </xpath>
+                <xpath expr="//field[@name='name']" position="after">
+                    <field name="especificacion_url" string="G-Drive" widget="url" text="Esp" optional="show"/>
+                    <field name="partner_shipping_id" optional="show"/>
+                    <field name="cantidad_programada" string="Programado" sum="Total programado"/>
+                </xpath>
+                <xpath expr="//field[@name='project_id']" position="after">
+                    <field name="puntuacion" avg="Avance" optional="show"/>
+                </xpath>
+            </field>
+        </record>
+
+    <!-- Inherit Form View to Modify it
+         Model: project.project
+    -->
+    <record id="view_project_wip_project_inherit_form" model="ir.ui.view">
+        <field name="name">view.project.wip.project.inherit.form</field>
+        <field name="model">project.project</field>
+        <field name="inherit_id" ref="project.edit_project"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='label_tasks']" position="after">
+                <br/>
+                <label for="es_proyecto_general" class="oe_inline" string="Proyecto general:"/>
+                <field name="es_proyecto_general" widget="boolean_toggle"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Busquedas,filtros y agrupaciones para el modelo movimientos (project.wip.task.movimiento) -->
+        <record id="view_project_wip_task_movimiento_search" model="ir.ui.view">
+            <field name="name">view_project_wip_task_movimiento_search</field>
+            <field name="model">project.wip.task.movimiento</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="name" string="Movimiento" filter_domain="[('name', 'ilike', self)]"/>
+                    <field name="numero_estilo" string="Número Estilo" filter_domain="['|', '|',
+                        ('numero_estilo', 'ilike', self),
+                        ('numero_orden', 'ilike', self),
+                        ('numero_oc', 'ilike', self)]"/>
+                    <field name="tarea_id" string="Tarea" filter_domain="['|',
+                        ('tarea_id.numero_tarea', 'ilike', self),
+                        ('tarea_id.name', 'ilike', self)]"/>
+                    <filter name="filter_movimientos" string="Movimientos" domain="[('proyecto_id.es_proyecto_general', '=', False), ('enviado', '=', True)]"/>
+                    <filter name="filter_entrada" string="Entrada" domain="[('tipo', '=', 'entrada')]"/>
+                    <filter name="filter_salida" string="Salida" domain="[('tipo', '=', 'salida')]"/>
+                    <separator/>
+                    <filter name="filter_state_parcial" string="Edo. parcial" domain="[('state', '=', 'parcial')]"/>
+                    <filter name="filter_state_liquidado" string="Edo. liquidado" domain="[('state', '=', 'liquidado')]"/>
+                    <group>
+                        <filter name="group_by_tipo" string="Entrada/Salida" context="{'group_by': 'tipo'}"/>
+                        <filter name="group_by_tarea" string="Tarea" context="{'group_by': 'tarea_id'}"/>
+                        <filter name="group_by_subtarea_destino" string="Origen/Destino" context="{'group_by': 'subtarea_destino_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <!-- Formulario para el modelo desglose (project.wip.task.movimiento) -->
+        <record id="view_project_wip_task_movimiento_form" model="ir.ui.view">
+            <field name="name">view.project.wip.task.movimiento.form</field>
+            <field name="model">project.wip.task.movimiento</field>
+            <field name="arch" type="xml">
+                <form string="Captura de movimiento">
+                    <sheet>
+                        <div class="oe_title">
+                            <h1><field name="name" attrs="{'readonly': [('tipo','=', 'salida')]}"/></h1>
+                        </div>
+                        <group>
+                            <field name="subtarea_destino_id" string="Origen/Destino"
+                                   domain="['|',('parent_id.numero_tarea', '=', [folio_tarea_padre]),('numero_tarea', '=', [folio_tarea_padre]),('es_tarea_liquidada','!=', True)]"
+                                   options="{'no_create': True, 'no_open': True}"/>
+                        </group>
+                        <group>
+                            <group>
+                                <field name="tipo"/>
+                                <field name="cantidad_movimiento" invisible="1"/>
+                                <field name="folio_tarea_padre" invisible="1"/>
+                                <field name="cantidad_captura"/>
+                                <field name="uom"/>
+                                <field name="fecha_movimiento"/>
+                                <field name="nota_salida" attrs="{'readonly': [('tipo','=', 'salida')]}"/>
+                                <field name="state"/>
+                            </group>
+                            <group>
+                                <field name="enviado"/>
+                                <field name="numero_estilo"/>
+                                <field name="numero_orden"/>
+                                <field name="numero_oc"/>
+                                <field name="numero_linea"/>
+                                <field name="proyecto_id"/>
+                            </group>
+                        </group>
+                        <group string="Descripción del movimiento">
+                            <field name="descripcion" nolabel="1"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Listado para el modelo movimientos (project.wip.task.movimiento) -->
+        <record id="view_project_wip_task_movimiento_tree" model="ir.ui.view">
+            <field name="name">view.project.wip.task.movimiento.tree</field>
+            <field name="model">project.wip.task.movimiento</field>
+            <field name="arch" type="xml">
+                <tree string="Entradas y salidas" create="false">
+                    <field name="proyecto_id" invisible="1"/>
+                    <field name="name"/>
+                    <field name="tipo"/>
+                    <field name="tarea_id" optional="show"/>
+                    <field name="subtarea_destino_id" string="Origen/Destino" optional="show"/>
+                    <field name="descripcion" optional="show"/>
+                    <field name="cantidad_movimiento" string="Cantidad" sum="Cantidad total"/>
+                    <field name="uom" optional="show"/>
+                    <field name="fecha_movimiento"/>
+                    <field name="nota_salida" optional="show"/>
+                    <field name="state" widget="badge" decoration-success="state == 'liquidado'" decoration-muted="state == 'parcial'"/>
+                </tree>
+            </field>
+        </record>
+
+
+    </data>
+
+</odoo>

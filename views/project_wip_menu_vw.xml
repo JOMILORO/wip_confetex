@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<odoo>
+    <!-- Menu para modulo Wip Confetex -->
+
+    <!-- Acción para Orden de Producción Estilos -->
+    <record id="project_wip_action_open_estilo" model="ir.actions.act_window">
+        <field name="name">Estilos</field>
+        <field name="res_model">project.wip.estilo</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context" eval="{'search_default_mis_estilos': 1}"/>
+    </record>
+
+    <!-- Acción para Orden de Prducción Especificaciones -->
+    <record id="project_wip_action_open_especificacion" model="ir.actions.act_window">
+        <field name="name">Especificaciones</field>
+        <field name="res_model">project.wip.especificacion</field>
+        <field name="view_mode">tree,form,kanban</field>
+        <field name="context" eval="{'search_default_mis_especificaciones': 1}"/>
+    </record>
+
+    <!-- Acción para Orden de Prducción Pedidos -->
+    <record id="project_wip_action_open_pedido" model="ir.actions.act_window">
+        <field name="name">Pedidos</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">project.wip.pedido</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context" eval="{'search_default_mis_pedidos': 1}"/>
+        <field name="help" type="html">
+          <p class="oe_view_nocontent_create">
+              Aún no hay ningun pedido, por favor crea uno.
+          </p><p>
+            <!-- More details about what a user can do with this object will be OK -->
+            Las ordenes de pedido del cleinte detallan por numero de talla el numero de prendas a producir
+          </p>
+        </field>
+    </record>
+
+    <!-- Acción para Orden de Prducción Líneas de pedido -->
+     <record id="project_wip_action_open_detalle_pedido" model="ir.actions.act_window">
+        <field name="name">Líneas de pedido</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">project.wip.detalle.pedido</field>
+        <field name="view_mode">tree,pivot</field>
+        <field name="help" type="html">
+          <p class="oe_view_nocontent_create">
+              Aún no hay ningún detalle de pedido, por favor crea uno desde pedidos
+          </p><p>
+            <!-- More details about what a user can do with this object will be OK -->
+            El detalle de pedido debe ser creado dedes un pedido, aquí no podrás crear, esta vista es solo de
+            consulta.
+          </p>
+        </field>
+    </record>
+
+    <!-- Acción para Movimientos Entradas y Salidas-->
+     <record id="project_wip_action_open_task_movimientos" model="ir.actions.act_window">
+        <field name="name">Entradas y salidas</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">project.wip.task.movimiento</field>
+        <field name="view_mode">tree</field>
+         <field name="context" eval="{'search_default_filter_movimientos': 1}"/>
+        <field name="help" type="html">
+          <p class="oe_view_nocontent_create">
+              Aún no hay ningún detalle de pedido, por favor crea uno desde una tarea
+          </p><p>
+            <!-- More details about what a user can do with this object will be OK -->
+            Un Movimiento debe ser creado dede una tarea, aquí no podrás crear ningún movimiento, esta vista es solo de
+            consulta.
+          </p>
+        </field>
+    </record>
+
+    <!-- Acción para Trazo Desglose -->
+    <record id="project_wip_action_open_desglose" model="ir.actions.act_window">
+        <field name="name">Desglose</field>
+        <field name="res_model">project.wip.desglose</field>
+        <field name="view_mode">tree,form,kanban</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Desglose no creado, por favor cree uno!
+            </p>
+            <p>
+                Los desgloses de trazo son hojas cálculo compartidos en Google Drive para ser trabajados en
+                modo colaborativo y estos contienen la información necesaria para trazar y cortar una orden de producción.
+            </p>
+        </field>
+    </record>
+
+    <!-- Acción para Movimientos Nota de Salida -->
+    <record id="project_wip_action_open_nota_salida" model="ir.actions.act_window">
+        <field name="name">Notas de salida</field>
+        <field name="res_model">project.wip.nota.salida</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context" eval="{'search_default_filter_nota_salida': 1}"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Ninguna nota, por favor cree una!
+            </p>
+            <p>
+                Las notas de salida son documentos que engloban movimientos de tipo salida  de las diferentes tareas que
+                existen en todo el proceso de producción.
+            </p>
+        </field>
+    </record>
+
+    <!-- Acción para Movimientos Nota de Salida 2 -->
+    <record id="project_wip_action2_open_nota_salida" model="ir.actions.act_window">
+        <field name="name">Notas complementarias</field>
+        <field name="res_model">project.wip.nota.salida</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context" eval="{'default_es_complemento': True, 'search_default_filter_nota_complemento': 1}"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Ninguna nota, por favor cree una!
+            </p>
+            <p>
+                Las notas de salida son documentos que engloban movimientos de tipo salida  de las diferentes tareas que
+                existen en todo el proceso de producción.
+            </p>
+        </field>
+    </record>
+
+    <!-- Acción para Movimientos Lineas complementarias-->
+     <record id="project_wip_action_open_nota_salida_linea" model="ir.actions.act_window">
+        <field name="name">Lineas complementarias</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">project.wip.nota.salida.linea</field>
+        <field name="view_mode">tree</field>
+         <field name="context" eval="{'search_default_filter_salida': 1}"/>
+        <field name="help" type="html">
+          <p class="oe_view_nocontent_create">
+              Aún no hay ninguna linea complementaria, por favor crea uno desde una nota de salida complementaria
+          </p><p>
+            <!-- More details about what a user can do with this object will be OK -->
+            Una linea complementaria debe ser creada dede una nota de salida complementaria, aquí no podrás crear ninguna linea, esta vista es solo de
+            consulta.
+          </p>
+        </field>
+    </record>
+
+    <!-- Acción para Trazo Bultos -->
+    <record id="project_wip_action_open_bulto" model="ir.actions.act_window">
+        <field name="name">Bultos</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">project.wip.bulto</field>
+        <field name="view_mode">tree,pivot</field>
+        <field name="help" type="html">
+          <p class="oe_view_nocontent_create">
+              Aún no hay ningún bulto, por favor crea uno desde desglose
+          </p><p>
+            <!-- More details about what a user can do with this object will be OK -->
+            Un bulto debe ser creado dedes un desglose, aquí no podrás crear, esta vista es solo para
+            consulta y filtros.
+          </p>
+        </field>
+    </record>
+
+    <!-- Acción para Configuración Especificaciones -->
+    <record id="project_wip_action_open_especificacion_tags" model="ir.actions.act_window">
+        <field name="name">Canal Wip</field>
+        <field name="res_model">project.wip.especificacion.tags</field>
+        <field name="view_mode">tree,form,kanban</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Etiquetas no encontradas, por favor crea una!
+            </p>
+            <p>
+                Las etiquetas son perfectas para categorizar las especificaciones.
+            </p>
+        </field>
+    </record>
+
+    <!-- Acción para Configuración Tabla Uno -->
+    <record id="project_wip_action_open_tabla_uno" model="ir.actions.act_window">
+        <field name="name">Tabla incremento en pedido</field>
+        <field name="res_model">project.wip.tabla.uno</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Tabla de incrementos de pedido vacía por favor, por favor cree un movimiento.
+            </p>
+            <p>
+                Los movimientos de incremento son perfectos para incrementar un pedido según el rango establecido.
+            </p>
+        </field>
+    </record>
+
+
+    <!-- Acción para Configuración Líneas de proceso -->
+    <record id="project_wip_action_open_linea_proceso" model="ir.actions.act_window">
+        <field name="name">Líneas de proceso</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">project.wip.linea.proceso</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+          <p class="oe_view_nocontent_create">
+              Agrega una línea de proceso
+          </p><p>
+              Las líneas de proceso son etapas por las que un producto pasa durante su ciclo de vida en la fabricación.
+          </p>
+        </field>
+    </record>
+
+    <!-- Acción para Lista de precios en Ventas -->
+    <record id="sale_wip_action_open_lista_precios" model="ir.actions.act_window">
+        <field name="name">Lista de precios</field>
+        <field name="res_model">sale.wip.lista.precios</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+          <p class="oe_view_nocontent_create">
+              Agrega un precio a una orden
+          </p><p>
+              Las listas de precios son un listado de precios organizados por número de orden de cliente, permitiendo tener un historial de ellos.
+          </p>
+        </field>
+    </record>
+
+    <!-- Menú horizontal Orden de Producción dentro de módulo project -->
+    <menuitem id="menu_horizontal_odp" name="Orden de Producción" sequence="200" parent="project.menu_main_pm"/>
+
+    <!-- Menú horizontal Movimientos dentro de módulo project -->
+    <menuitem id="menu_horizontal_movimientos" name="Movimientos" sequence="210" parent="project.menu_main_pm"/>
+
+    <!-- Menú horizontal Desglose Trazo dentro de módulo project -->
+    <menuitem id="menu_horizontal_trazo" name="Trazo" sequence="220" parent="project.menu_main_pm"/>
+
+    <!-- Menú horizontal Canales dentro de módulo project -->
+    <menuitem id="menu_horizontal_canales" name="Canales" sequence="230" parent="project.menu_main_pm"/>
+
+    <!-- Menú horizontal Lista de Precios dentro de módulo ventas -->
+    <menuitem id="menu_horizontal_lista_precios" name="Lista de precios" parent="sale.sale_menu_root"  action="sale_wip_action_open_lista_precios" sequence="11"/>
+
+    <!-- Menú vertical Estilo -->
+    <menuitem id="muenu_vertical_odp_estilo" name="Estilos" parent="menu_horizontal_odp" action="project_wip_action_open_estilo"/>
+
+    <!-- Menú vertical Especificación -->
+    <menuitem id="muenu_vertical_odp_especificacion" name="Especificaciones" parent="menu_horizontal_odp" action="project_wip_action_open_especificacion"/>
+
+    <!-- Menú vertical Pedido -->
+    <menuitem id="muenu_vertical_odp_pedido" name="Pedidos" parent="menu_horizontal_odp" action="project_wip_action_open_pedido"/>
+
+    <!-- Menú vertical Líneas de pedido -->
+    <menuitem id="muenu_vertical_odp_detalle_pedido" name="Línea de pedido" parent="menu_horizontal_odp" action="project_wip_action_open_detalle_pedido"/>
+
+    <!-- Menú vertical Nota de salida -->
+    <menuitem id="muenu_vertical_movimiento_nota_salida" name="Notas de salida" sequence="10" parent="menu_horizontal_movimientos" action="project_wip_action_open_nota_salida"/>
+
+    <!-- Menú vertical Entradas y Salidas -->
+    <menuitem id="muenu_vertical_movimiento_entrada_salida" name="Entradas y salidas" sequence="20" parent="menu_horizontal_movimientos" action="project_wip_action_open_task_movimientos"/>
+
+    <!-- Menú vertical Nota de salida complemento -->
+    <menuitem id="muenu_vertical_movimiento_nota_salida_complemento" name="Nota complemento" sequence="30" parent="menu_horizontal_movimientos" action="project_wip_action2_open_nota_salida"/>
+
+    <!-- Menú vertical lineas nota de salida complemento -->
+<!--    <menuitem id="muenu_vertical_movimiento_linea_nota_salida_complemento" name="Lineas nota complemento" sequence="40" parent="menu_horizontal_movimientos" action="project_wip_action_open_nota_salida_linea"/>-->
+
+    <!-- Menú vertical Desglose -->
+    <menuitem id="muenu_vertical_trazo_desglose" name="Desglose" parent="menu_horizontal_trazo" action="project_wip_action_open_desglose"/>
+
+    <!-- Menú vertical Bultos -->
+    <menuitem id="muenu_vertical_trazo_bultos" name="Bultos" parent="menu_horizontal_trazo" action="project_wip_action_open_bulto"/>
+
+    <!-- Menú vertical Linea de Proceso -->
+    <menuitem id="menu_vertical_conf_linea_proceso" name="Líneas de Proceso" parent="project.menu_project_config" action="project_wip_action_open_linea_proceso"/>
+
+    <!-- Menú vertical Tabla Uno -->
+    <menuitem id="menu_vertical_conf_tabla_uno" name="Incremento en Pedido" parent="project.menu_project_config" action="project_wip_action_open_tabla_uno"/>
+
+    <!-- Menú vertical Canal especificación -->
+    <menuitem id="menu_vertical_conf_especificacion_tags" name="Canales Wip" parent="menu_horizontal_canales" action="project_wip_action_open_especificacion_tags"/>
+
+</odoo>

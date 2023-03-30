@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+
+    <!-- Busquedas,filtros y agrupaciones para el modelo estilo (project.wip.estilo) -->
+    <record id="view_project_wip_estilo_search" model="ir.ui.view">
+        <field name="name">project.wip.estilo.search</field>
+        <field name="model">project.wip.estilo</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name" string="Nombre y número" filter_domain="['|', ('name', 'ilike', self), ('numero_estilo', 'ilike', self)]"/>
+                <filter name="mis_estilos" string="Mis estilos" domain="[('create_uid', '=', uid)]"/>
+                <filter name="estilos_archivados" string="Archivados" domain="[('active', '=', False)]"/>
+                <filter name="estilos_produccion" string="Producción" domain="[('tipo_estilo', '=', '1')]"/>
+                <filter name="estilos_muestras" string="Muestras" domain="[('tipo_estilo', '=', '2')]"/>
+                <group>
+                    <filter name="group_by_cliente" string="Cliente" context="{'group_by': 'cliente_id'}"/>
+                    <filter name="group_by_agente_ventas" string="Agente de Ventas" context="{'group_by': 'agente_ventas_id'}"/>
+                    <filter name="group_by_tipo_especificacion" string="Tipo Especificación" context="{'group_by': 'tipo_estilo'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="estilo_task_action_open_wizard" model="ir.actions.act_window">
+        <field name="name">Crear Tarea</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">estilo.task.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_estilo_task_wizard_form"/>
+        <field name="target">new</field>
+    </record>
+
+    <record id="especificacion_action_open_wizard" model="ir.actions.act_window">
+        <field name="name">Crear Especificación</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">especificacion.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_especificacion_wizard_form"/>
+        <field name="target">new</field>
+    </record>
+
+     <!-- Acción para el modelo estilo (project.wip.estilo)
+          Abre o muestra todos las Tareas asociadas a un estilo, por
+          default muestra la vista Kamban -->
+    <record id="action_view_task_id" model="ir.actions.act_window">
+        <field name="name">Tareas</field>
+        <field name="res_model">project.task</field>
+        <field name="view_mode">kanban,tree,form,calendar,pivot,graph</field>
+        <field name="domain">[('estilo_id', '=', active_id), ('project_id.es_proyecto_general', '=', True)]</field>
+        <field name="context">{'search_default_estilo_id': active_id, 'default_estilo_id': active_id}</field>
+        <field name="help" type="html">
+            <p>
+                La gestión de proyectos de Odoo le permite gestionar la canalización de sus tareas de manera
+                eficiente. Puede realizar un seguimiento del progreso, debatir sobre las tareas, adjuntar
+                documentos, etc
+            </p>
+        </field>
+    </record>
+
+    <!-- Acción para el modelo estilo (project.wip.estilo)
+         Abre o muestra todos las especificaciones asociados a un estilo, por
+         default muestra la vista Kamban -->
+    <record id="action_view_especificacion_id" model="ir.actions.act_window">
+        <field name="name">Especificaciones</field>
+        <field name="res_model">project.wip.especificacion</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="domain">[('estilo_id', '=', active_id)]</field>
+        <field name="context">{'search_default_estilo_id': active_id, 'default_estilo_id': active_id}</field>
+        <field name="help" type="html">
+            <p>
+                La gestión de proyectos de Odoo le permite gestionar la canalización de sus tareas de manera
+                eficiente. Puede realizar un seguimiento del progreso, debatir sobre las tareas, adjuntar
+                documentos, etc
+            </p>
+        </field>
+    </record>
+
+    <!-- Acción para el modelo estilo (project.wip.estilo)
+         Abre o muestra todos las variantes de producto pertenecientes a un estilo, por
+         default muestra la vista lista -->
+    <record id="action_view_product_product_numero_estilo" model="ir.actions.act_window">
+        <field name="name">Variantes de productos</field>
+        <field name="res_model">product.product</field>
+        <field name="view_mode">tree,kanban,form</field>
+        <field name="domain">[('default_code', '=', default_numero_estilo)]</field>
+<!--        <field name="context">{'search_default_order_talla': 1}</field>-->
+        <field name="help" type="html">
+            <p>
+                La gestión de proyectos de Odoo le permite gestionar la canalización de sus tareas de manera
+                eficiente. Puede realizar un seguimiento del progreso, debatir sobre las tareas, adjuntar
+                documentos, etc
+            </p>
+        </field>
+    </record>
+
+    <!-- Formulario para el modelo estilo (project.wip.estilo) -->
+    <record id="view_project_wip_estilo_form" model="ir.ui.view">
+        <field name="name">Vista formulario para estilo</field>
+        <field name="model">project.wip.estilo</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="%(estilo_task_action_open_wizard)d" type="action" string="Crear Tarea"/>
+                    <!-- <button name="%(especificacion_action_open_wizard)d" type="action" string="Crear Especificación" class="oe_highlight"/> -->
+                    <button name="copiar_plantilla_producto" type="object" string="Crear producto"/>
+                </header>
+                <sheet>
+                     <div class="oe_button_box" name="button_box">
+                         <button class="oe_stat_button" name="%(action_view_task_id)d" type="action" context="{'default_cliente_id': cliente_id}" icon="fa-tasks">
+                             <field name="wip_task_numero" string="Tareas" widget="statinfo"/>
+                         </button>
+                         <button class="oe_stat_button" name="%(action_view_especificacion_id)d" type="action" context="{'default_cliente_id': cliente_id}" icon="fa-file">
+                             <field name="wip_especificacion_numero" widget="statinfo"/>
+                         </button>
+                         <button class="oe_stat_button" name="%(action_view_product_product_numero_estilo)d" type="action" context="{'default_numero_estilo': numero_estilo}" icon="fa-cubes">
+                             <field name="variantes_producto_numero" widget="statinfo"/>
+                         </button>
+                     </div>
+                    <widget name="web_ribbon" title="Archivado" bg_color="bg-danger" attrs="{'invisible': [('active','=',True)]}"/>
+                    <div class="oe_title">
+                        <field name="active" invisible="1"/>
+                        <label class="oe_edit_only" for="name" string="Nombre del estilo"/>
+                        <h1><field name="name" placeholder="Nombre del estilo" required="1" default_focus="1"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="color_estilo"/>
+                            <field name="numero_estilo" required="1"/>
+                            <field name="cliente_id" domain="[('category_id','in',[category_cliente_id])]" options="{'no_create': True, 'no_open': True}"/>
+                            <field name="category_cliente_id" invisible="1"/>
+                        </group>
+                        <group>
+                            <field name="agente_ventas_id"/>
+                            <field name="tipo_estilo"/>
+                            <field name="genero_ids" widget="many2many_tags"/>
+                        </group>
+                    </group>
+                    <separator string="Detalles"/>
+                    <notebook>
+                        <page string="Comentario">
+                            <field name="comentario"/>
+                        </page>
+                        <page string="Secuencia automática">
+                            <group>
+                                <group>
+                                    <field name="es_secuencia_automatica" widget="boolean_toggle"/>
+                                    <field name="tipo_secuencia_oc" attrs="{'invisible': [('es_secuencia_automatica', '=', False)]}"/>
+                                </group>
+                                <group>
+
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Información de estilo">
+                            <group>
+                                <group>
+                                    <field name="create_uid" string="Creado por"/>
+                                    <field name="create_date" string="Creado el"/>
+                                    <field name="write_uid" string="Actualizado por"/>
+                                    <field name="write_date" string="Actualizado el"/>
+                                </group>
+                                <group>
+
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Listado para el modelo estilo (project.wip.estilo) -->
+    <record id="view_project_wip_estilo_tree" model="ir.ui.view">
+        <field name="name">Vista lista de estilo</field>
+        <field name="model">project.wip.estilo</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="numero_estilo"/>
+                <field name="name"/>
+                <field name="cliente_id"/>
+                <field name="tipo_estilo"/>
+                <field name="agente_ventas_id"/>
+            </tree>
+        </field>
+    </record>
+
+</odoo>

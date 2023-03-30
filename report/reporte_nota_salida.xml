@@ -1,0 +1,339 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+
+    <record id="action_report_nota_salida" model="ir.actions.report">
+        <field name="name">Nota de salida</field>
+        <field name="model">project.wip.nota.salida</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">wip_confetex.report_nota_salida</field>
+        <field name="report_file">wip_confetex.report_nota_salida</field>
+        <field name="print_report_name">('Nota de salida - %s' %(object.name))</field>
+        <field name="binding_model_id" ref="model_project_wip_nota_salida"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <record id="action_report_nota_salida_2" model="ir.actions.report">
+        <field name="name">Nota complementaria</field>
+        <field name="model">project.wip.nota.salida</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">wip_confetex.report_nota_salida_2</field>
+        <field name="report_file">wip_confetex.report_nota_salida_2</field>
+        <field name="print_report_name">('Nota complementaria - %s' %(object.name))</field>
+        <field name="binding_model_id" ref="model_project_wip_nota_salida"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_nota_salida">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <div class="oe_structure"/>
+                        <div t-if="o.name" class="col-3 bm-2">
+                            <img t-att-src="'/report/barcode/?type=%s&amp;value=%s&amp;width=%s&amp;height=%s' % ('Code128', o.name, 600, 150)" style="width:100%;height:4rem" alt="Barcode"/>
+                        </div>
+                        <br/>
+                        <h2 t-if="o.state == 'borrador'">Borrador de nota de salida #<span t-field="o.name"/></h2>
+                        <h2 t-if="o.state == 'confirmado'">Nota de salida confirmada #<span t-field="o.name"/></h2>
+                        <h2 t-if="o.state == 'finalizado'">Nota de salida #<span t-field="o.name"/></h2>
+                        <h2 t-if="o.state == 'cancelado'">Nota de salida cancelada #<span t-field="o.name"/></h2>
+                        <div id="informacion-remitente" class="row mt32 mb32">
+                            <div t-if="o.remitente_empresa_id" class="col-3 bm-2">
+                                <strong>Envia:</strong>
+                                <p t-field="o.remitente_empresa_id" class="m-0"/>
+                            </div>
+                            <div t-if="o.remitente_user_id" class="col-3 bm-2">
+                                <strong>Remitente:</strong>
+                                <p t-field="o.remitente_user_id" class="m-0"/>
+                            </div>
+                            <div t-if="o.proyecto_id" class="col-3 bm-2">
+                                <strong>Proyecto:</strong>
+                                <p t-field="o.proyecto_id" class="m-0"/>
+                            </div>
+                            <div t-if="o.fecha_nota" class="col-3 bm-2">
+                                <strong>Fecha:</strong>
+                                <p t-field="o.fecha_nota" class="m-0"/>
+                            </div>
+                        </div>
+                        <br/>
+                        <div id="informacion-destinatario" class="row mt32 mb32">
+                            <div t-if="o.destinatario_empresa_id" class="col-3 bm-2">
+                                <strong>Recibe:</strong>
+                                <p t-field="o.destinatario_empresa_id" class="m-0"/>
+                            </div>
+                            <div t-if="o.destinatario_user" class="col-3 bm-2">
+                                <strong>Destinatario:</strong>
+                                <p t-field="o.destinatario_user" class="m-0"/>
+                            </div>
+                            <div t-if="o.state" class="col-3 bm-2">
+                                <strong>Estado:</strong>
+                                <p t-field="o.state" class="m-0"/>
+                            </div>
+                            <div t-if="o.fecha_nota_fin" class="col-3 bm-2">
+                                <strong>Fecha fin:</strong>
+                                <p t-field="o.fecha_nota_fin" class="m-0"/>
+                            </div>
+                        </div>
+                        <br/>
+                        <div id="observaciones" class="row mt32 mb32">
+                            <div t-if="o.observacion" class="col-12 bm-2">
+                                <strong>Observaciones:</strong>
+                                <p t-field="o.observacion" class="m-0"/>
+                            </div>
+                        </div>
+                        <br/>
+                        <table class="table table-sm o_main_table">
+                            <thead>
+                                <tr>
+                                    <th name="th_movimiento" class="text-center"><strong>Movimiento</strong></th>
+                                    <th name="th_cantidad" class="text-center"><strong>Cantidad</strong></th>
+                                    <th name="th_uom" class="text-center"><strong>Unidad</strong></th>
+                                    <th name="descripción" class="text-center"><strong>Descripción del artículo</strong></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="o.movimientos_ids" t-as="linea">
+                                    <tr>
+                                        <td id="name_mov" class="text-center">
+                                            <span t-field="linea.name"/><br/>
+                                            <span t-field="linea.fecha_movimiento"/><br/>
+                                            <span t-field="linea.state"/>
+                                            <div t-if="linea.enviado">
+                                                <strong>Enviado</strong>
+                                            </div>
+                                        </td>
+                                        <td id="cantidad-captura" class="text-center">
+                                            <span t-field="linea.cantidad_captura"/>
+                                        </td>
+                                        <td id="uom" class="text-center">
+                                            <span t-field="linea.uom"/>
+                                        </td>
+                                        <td id="descripcion">
+                                            <span t-field="linea.descripcion"/><br/>
+                                            Destino:<span t-field="linea.subtarea_destino_id"/>
+                                            <div t-if="linea.subtarea_destino_id.numero_tarea" class="col-5 bm-2">
+                                                <img t-att-src="'/report/barcode/?type=%s&amp;value=%s&amp;width=%s&amp;height=%s' % ('Code128', linea.subtarea_destino_id.numero_tarea, 600, 150)" style="width:100%;height:4rem" alt="Barcode"/>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                        <div id="cantidad-total" class="row justify-content-end">
+                            <div class="col-4">
+                                <table class="table table-sm">
+                                    <tr class="border-black o_total">
+                                        <td name="td_cantidad_total"><strong>Cantidad total</strong></td>
+                                        <td class="text-right"><span t-field="o.total_nota"/></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                        <div id="firma" class="row" style="padding-top:70px;">
+                            <div t-if="o.destinatario_user" class="col-4">
+                                <table class="table table-sm">
+                                    <thead>
+                                        <tr class="border-black o_total">
+                                            <th name="th_destinatario_user" class="text-center"><strong>Recibi mercancía</strong></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td id="destinatario_user" class="text-center">
+                                                <span t-field="o.destinatario_user"/>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div t-if="o.autoriza_user_id" class="col-4">
+                                <table class="table table-sm">
+                                    <thead>
+                                        <tr class="border-black o_total">
+                                            <th name="th_autoriza_user_id" class="text-center"><strong>Autorizo</strong></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td id="autoriza_user_id" class="text-center">
+                                                <span t-field="o.autoriza_user_id"/>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div t-if="o.remitente_user_id" class="col-4">
+                                <table class="table table-sm">
+                                    <thead>
+                                        <tr class="border-black o_total">
+                                            <th name="th_remitente_user_id" class="text-center"><strong>Entrego</strong></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td id="remitente_user_id" class="text-center">
+                                                <span t-field="o.remitente_user_id"/>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <template id="report_nota_salida_2">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <div class="oe_structure"/>
+                        <h2 t-if="o.state == 'borrador'">Borrador de nota complementaria #<span t-field="o.name"/></h2>
+                        <h2 t-if="o.state == 'confirmado'">Nota complementaria confirmada #<span t-field="o.name"/></h2>
+                        <h2 t-if="o.state == 'finalizado'">Nota de salida #<span t-field="o.name"/></h2>
+                        <h2 t-if="o.state == 'cancelado'">Nota complementaria cancelada #<span t-field="o.name"/></h2>
+                        <div id="informacion-remitente" class="row mt32 mb32">
+                            <div t-if="o.remitente_empresa_id" class="col-3 bm-2">
+                                <strong>Envia:</strong>
+                                <p t-field="o.remitente_empresa_id" class="m-0"/>
+                            </div>
+                            <div t-if="o.remitente_user_id" class="col-3 bm-2">
+                                <strong>Remitente:</strong>
+                                <p t-field="o.remitente_user_id" class="m-0"/>
+                            </div>
+                            <div t-if="o.proyecto_id" class="col-3 bm-2">
+                                <strong>Proyecto:</strong>
+                                <p t-field="o.proyecto_id" class="m-0"/>
+                            </div>
+                            <div t-if="o.name" class="col-3 bm-2">
+                                <img t-att-src="'/report/barcode/?type=%s&amp;value=%s&amp;width=%s&amp;height=%s' % ('Code128', o.name, 600, 150)" style="width:100%;height:4rem" alt="Barcode"/>
+                            </div>
+                        </div>
+                        <br/>
+                        <div id="informacion-destinatario" class="row mt32 mb32">
+                            <div t-if="o.destinatario_empresa_id" class="col-3 bm-2">
+                                <strong>Recibe:</strong>
+                                <p t-field="o.destinatario_empresa_id" class="m-0"/>
+                            </div>
+                            <div t-if="o.destinatario_user" class="col-3 bm-2">
+                                <strong>Destinatario:</strong>
+                                <p t-field="o.destinatario_user" class="m-0"/>
+                            </div>
+                            <div t-if="o.state" class="col-3 bm-2">
+                                <strong>Estado:</strong>
+                                <p t-field="o.state" class="m-0"/>
+                            </div>
+                            <div t-if="o.fecha_nota" class="col-3 bm-2">
+                                <strong>Fecha:</strong>
+                                <p t-field="o.fecha_nota" class="m-0"/>
+                            </div>
+                        </div>
+                        <br/>
+                        <div id="observaciones" class="row mt32 mb32">
+                            <div t-if="o.observacion" class="col-12 bm-2">
+                                <strong>Observaciones:</strong>
+                                <p t-field="o.observacion" class="m-0"/>
+                            </div>
+                        </div>
+                        <br/>
+                        <table class="table table-sm o_main_table">
+                            <thead>
+                                <tr>
+                                    <th name="th_movimiento" class="text-center"><strong>Movimiento</strong></th>
+                                    <th name="th_cantidad" class="text-center"><strong>Cantidad</strong></th>
+                                    <th name="th_uom" class="text-center"><strong>Unidad</strong></th>
+                                    <th name="descripción" class="text-center"><strong>Descripción del artículo</strong></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="o.linea_ids" t-as="linea">
+                                    <tr>
+                                        <td id="name_linea" class="text-center">
+                                            <span t-field="linea.name"/><br/>
+                                            <span t-field="linea.fecha_movimiento"/><br/>
+                                            <span t-field="linea.estado_movimiento"/>
+                                        </td>
+                                        <td id="cantidad-captura" class="text-center">
+                                            <span t-field="linea.cantidad_captura"/>
+                                        </td>
+                                        <td id="uom" class="text-center">
+                                            <span t-field="linea.uom"/>
+                                        </td>
+                                        <td id="descripcion">
+                                            <span t-field="linea.descripcion"/><br/>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                        <div id="cantidad-total" class="row justify-content-end">
+                            <div class="col-4">
+                                <table class="table table-sm">
+                                    <tr class="border-black o_total">
+                                        <td name="td_cantidad_total"><strong>Cantidad total</strong></td>
+                                        <td class="text-right"><span t-field="o.total_nota"/></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                        <div id="firma" class="row" style="padding-top:70px;">
+                            <div t-if="o.destinatario_user" class="col-4">
+                                <table class="table table-sm">
+                                    <thead>
+                                        <tr class="border-black o_total">
+                                            <th name="th_destinatario_user" class="text-center"><strong>Recibi mercancía</strong></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td id="destinatario_user" class="text-center">
+                                                <span t-field="o.destinatario_user"/>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div t-if="o.autoriza_user_id" class="col-4">
+                                <table class="table table-sm">
+                                    <thead>
+                                        <tr class="border-black o_total">
+                                            <th name="th_autoriza_user_id" class="text-center"><strong>Autorizo</strong></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td id="autoriza_user_id" class="text-center">
+                                                <span t-field="o.autoriza_user_id"/>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div t-if="o.remitente_user_id" class="col-4">
+                                <table class="table table-sm">
+                                    <thead>
+                                        <tr class="border-black o_total">
+                                            <th name="th_remitente_user_id" class="text-center"><strong>Entrego</strong></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td id="remitente_user_id" class="text-center">
+                                                <span t-field="o.remitente_user_id"/>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+</odoo>
